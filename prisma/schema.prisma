@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vehicle {
+  name String @id
+  // can change
+  kilometersTraveledAnnualy Float
+  hoursWorkedPerYear        Float
+  vehicleAcquisitionValue   Float
+  vehicleUsefulLife         Float
+  vehicleResidualValue      Float
+  trailerAcquisitionValue   Float
+  trailerUsefulLife         Float
+  trailerResidualValue      Float
+  otherCosts                Float
+  driversAnnualPerDiem      Float
+  annualInsuranceCosts      Float
+  annualFiscalCost          Float
+  fuelPrice                 Float
+  averageConsumption        Float
+  indirectCosts             Float
+  // user cannot change
+  costPerTirePerKm          Float
+  maintenanceCostPerKm      Float
+  // do not expose
+  interestRate Float
+}
