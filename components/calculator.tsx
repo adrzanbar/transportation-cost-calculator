@@ -19,18 +19,39 @@ import {
 } from "./ui/select";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
 import { calculate } from "@/actions";
 import { Vehicle } from "@prisma/client";
 import {
-  calculateAmortizationAndFinancialExpenses,
+  calculateAnnualCostStructure,
   calculateAnnualFuelExpense,
   calculateAnnualMaintenanceExpense,
   calculateAnnualTireExpense,
-  calculateInsuranceTaxesManagementAndMarketing,
-  calculatePersonnel,
 } from "@/lib/utils";
 import { CalculatorFormData, calculatorFormSchema } from "@/schema";
+import { AnnualCostPieChart } from "./pie-chart";
+import { useMemo } from "react";
+
+const defaultVehicle = {
+  name: "",
+  kilometersTraveledAnnualy: 0,
+  hoursWorkedPerYear: 0,
+  vehicleAcquisitionValue: 0,
+  vehicleUsefulLife: 0,
+  vehicleResidualValue: 0,
+  trailerAcquisitionValue: 0,
+  trailerUsefulLife: 0,
+  trailerResidualValue: 0,
+  otherCosts: 0,
+  driversAnnualPerDiem: 0,
+  annualInsuranceCosts: 0,
+  annualFiscalCost: 0,
+  fuelPrice: 0,
+  averageConsumption: 0,
+  indirectCosts: 0,
+  costPerTirePerKm: 0,
+  maintenanceCostPerKm: 0,
+  interestRate: 0,
+};
 
 export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
   const form = useForm<CalculatorFormData>({
@@ -54,34 +75,20 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
       indirectCosts: 0,
     },
   });
-  const name = form.watch("name");
-  const kilometersTraveledAnnualy = form.watch("kilometersTraveledAnnualy");
-  const vehicleAcquisitionValue = form.watch("vehicleAcquisitionValue");
-  const vehicleUsefulLife = form.watch("vehicleUsefulLife");
-  const vehicleResidualValue = form.watch("vehicleResidualValue");
-  const trailerAcquisitionValue = form.watch("trailerAcquisitionValue");
-  const trailerUsefulLife = form.watch("trailerUsefulLife");
-  const trailerResidualValue = form.watch("trailerResidualValue");
-  const otherCosts = form.watch("otherCosts");
-  const driversAnnualPerDiem = form.watch("driversAnnualPerDiem");
-  const annualInsuranceCosts = form.watch("annualInsuranceCosts");
-  const annualFiscalCost = form.watch("annualFiscalCost");
-  const fuelPrice = form.watch("fuelPrice");
-  const averageConsumption = form.watch("averageConsumption");
-  const indirectCosts = form.watch("indirectCosts");
-  const fillFormWithDefaultValues = () => {
-    const vehicle = vehicles.find((vehicle) => vehicle.name === name);
-    if (vehicle) {
-      form.reset({ ...vehicle });
-    }
-  };
-  const onSubmit = async () => {
-    await calculate(form.getValues());
-  };
+
+  const params = form.watch();
+
+  const vehicle = useMemo(
+    () =>
+      vehicles.find((vehicle) => vehicle.name === params.name) ||
+      defaultVehicle,
+    [vehicles, params.name]
+  );
+
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(() => console.log(form.getValues()))}>
           <FormField
             control={form.control}
             name="name"
@@ -111,7 +118,7 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           <Button
             onClick={(e) => {
               e.preventDefault();
-              fillFormWithDefaultValues();
+              form.reset({ ...vehicle });
             }}
           >
             Valores por defecto
@@ -303,13 +310,7 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
             <FormControl>
               <Input
                 disabled
-                value={
-                  calculateAnnualFuelExpense(
-                    kilometersTraveledAnnualy,
-                    fuelPrice,
-                    averageConsumption
-                  ) || 0
-                }
+                value={calculateAnnualFuelExpense({ ...params })}
               />
             </FormControl>
             <FormMessage />
@@ -319,13 +320,7 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
             <FormControl>
               <Input
                 disabled
-                value={
-                  calculateAnnualTireExpense(
-                    kilometersTraveledAnnualy,
-                    vehicles.find((vehicle) => vehicle.name === name)
-                      ?.costPerTirePerKm || 0
-                  ) || 0
-                }
+                value={calculateAnnualTireExpense({ ...vehicle, ...params })}
               />
             </FormControl>
             <FormMessage />
@@ -335,13 +330,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
             <FormControl>
               <Input
                 disabled
-                value={
-                  calculateAnnualMaintenanceExpense(
-                    kilometersTraveledAnnualy,
-                    vehicles.find((vehicle) => vehicle.name === name)
-                      ?.maintenanceCostPerKm || 0
-                  ) || 0
-                }
+                value={calculateAnnualMaintenanceExpense({
+                  ...vehicle,
+                  ...params,
+                })}
               />
             </FormControl>
             <FormMessage />
@@ -359,10 +351,26 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
               </FormItem>
             )}
           />
+          <div>
+            <AnnualCostPieChart
+              costData={Object.values(
+                calculateAnnualCostStructure({
+                  ...vehicle,
+                  ...params,
+                })
+              )}
+              label="Estructura de costes anuales"
+            />
+            <AnnualCostPieChart
+              costData={Object.values(
+                calculateAnnualCostStructure({ ...vehicle })
+              )}
+              label="Datos estadísticos"
+            />
+          </div>
           <Button type="submit">Calcular</Button>
         </form>
       </Form>
-      <div></div>
     </div>
   );
 }

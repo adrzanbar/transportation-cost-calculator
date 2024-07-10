@@ -5,21 +5,31 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const calculateAnnualFuelExpense = (
-  kilometersTraveledAnnualy: number,
-  fuelPrice: number,
-  averageConsumption: number
-) => (kilometersTraveledAnnualy / 100) * fuelPrice * averageConsumption;
+export const calculateAnnualFuelExpense = ({
+  kilometersTraveledAnnualy,
+  fuelPrice,
+  averageConsumption,
+}: {
+  kilometersTraveledAnnualy: number;
+  fuelPrice: number;
+  averageConsumption: number;
+}) => (kilometersTraveledAnnualy / 100) * fuelPrice * averageConsumption;
 
-export const calculateAnnualTireExpense = (
-  kilometersTraveledAnnualy: number,
-  costPerTirePerKm: number
-) => kilometersTraveledAnnualy * costPerTirePerKm;
+export const calculateAnnualTireExpense = ({
+  kilometersTraveledAnnualy,
+  costPerTirePerKm,
+}: {
+  kilometersTraveledAnnualy: number;
+  costPerTirePerKm: number;
+}) => kilometersTraveledAnnualy * costPerTirePerKm;
 
-export const calculateAnnualMaintenanceExpense = (
-  kilometersTraveledAnnualy: number,
-  maintenanceCostPerKm: number
-) => kilometersTraveledAnnualy * maintenanceCostPerKm;
+export const calculateAnnualMaintenanceExpense = ({
+  kilometersTraveledAnnualy,
+  maintenanceCostPerKm,
+}: {
+  kilometersTraveledAnnualy: number;
+  maintenanceCostPerKm: number;
+}) => kilometersTraveledAnnualy * maintenanceCostPerKm;
 
 export const calculateAmortizationAndFinancialExpenses = (
   interestRate: number,
@@ -63,16 +73,16 @@ export const calculateFuelTireRepairAndMaintenance = (
   costPerTirePerKm: number,
   maintenanceCostPerKm: number
 ) =>
-  calculateAnnualFuelExpense(
+  calculateAnnualFuelExpense({
     kilometersTraveledAnnualy,
     fuelPrice,
-    averageConsumption
-  ) +
-  calculateAnnualTireExpense(kilometersTraveledAnnualy, costPerTirePerKm) +
-  calculateAnnualMaintenanceExpense(
+    averageConsumption,
+  }) +
+  calculateAnnualTireExpense({ kilometersTraveledAnnualy, costPerTirePerKm }) +
+  calculateAnnualMaintenanceExpense({
     kilometersTraveledAnnualy,
-    maintenanceCostPerKm
-  );
+    maintenanceCostPerKm,
+  });
 
 export const calculateAnnualCostStructure = ({
   kilometersTraveledAnnualy,

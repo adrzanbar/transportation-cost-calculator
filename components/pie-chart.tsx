@@ -71,15 +71,12 @@ export function AnnualCostPieChart({
   costData: number[];
   label: string;
 }) {
-  React.useEffect(() => {
-    for (let i = 0; i < costData.length; i++) {
-      chartData[i].cost = costData[i];
-    }
-  }, []);
+  for (let i = 0; i < costData.length; i++) {
+    chartData[i].cost = costData[i];
+  }
   const totalCost = React.useMemo(() => {
     return costData.reduce((acc, cost) => acc + cost, 0);
   }, [costData]);
-
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
