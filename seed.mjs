@@ -21,7 +21,7 @@ const vehicles = [
     averageConsumption: 42,
     indirectCosts: 9101.29,
     costPerTirePerKm: 0.2475,
-    maintenanceCostPerKm: 0.2,
+    maintenanceCostPerKm: 0.02,
     interestRate: 0.05,
   },
   {
@@ -42,7 +42,7 @@ const vehicles = [
     averageConsumption: 35,
     indirectCosts: 2459,
     costPerTirePerKm: 0.0825,
-    maintenanceCostPerKm: 0.2,
+    maintenanceCostPerKm: 0.02,
     interestRate: 0.05,
   },
   {
@@ -63,7 +63,7 @@ const vehicles = [
     averageConsumption: 17,
     indirectCosts: 1251.89,
     costPerTirePerKm: 0.0216,
-    maintenanceCostPerKm: 0.1,
+    maintenanceCostPerKm: 0.01,
     interestRate: 0.05,
   },
 ];

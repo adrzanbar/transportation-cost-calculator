@@ -57,17 +57,23 @@ export const calculateFuelTireRepairAndMaintenance = (
   averageConsumption: number,
   costPerTirePerKm: number,
   maintenanceCostPerKm: number
-) =>
-  calculateAnnualFuelExpense(
+) => {
+  const a = calculateAnnualFuelExpense(
     kilometersTraveledAnnualy,
     fuelPrice,
     averageConsumption
-  ) +
-  calculateAnnualTireExpense(kilometersTraveledAnnualy, costPerTirePerKm) +
-  calculateAnnualMaintenanceExpense(
+  );
+  const b = calculateAnnualTireExpense(
+    kilometersTraveledAnnualy,
+    costPerTirePerKm
+  );
+  const c = calculateAnnualMaintenanceExpense(
     kilometersTraveledAnnualy,
     maintenanceCostPerKm
   );
+  console.log(a, b, c);
+  return a + b + c;
+};
 
 export const calculateAnnualCostStructure = ({
   kilometersTraveledAnnualy,

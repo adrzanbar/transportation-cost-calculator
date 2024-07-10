@@ -2,10 +2,7 @@
 import { calculateAnnualCostStructure } from "@/lib/utils";
 import db from "@/db";
 import { redirect } from "next/navigation";
-import {
-  CalculatorFormData,
-  calculatorFormSchema,
-} from "@/schema";
+import { CalculatorFormData, calculatorFormSchema } from "@/schema";
 
 export async function calculate(formData: CalculatorFormData) {
   const validation = await calculatorFormSchema.safeParseAsync(formData);
@@ -29,10 +26,6 @@ export async function calculate(formData: CalculatorFormData) {
     ...validation.data,
     ...vehicle,
   });
-  const searchParams = new URLSearchParams(
-    Object.fromEntries(
-      Object.entries(params).map(([key, value]) => [key, String(value)])
-    )
-  );
-  return redirect(`/results?${searchParams.toString()}`);
+  const path = Object.values(params).join("/");
+  return redirect(`/results/${path}`);
 }

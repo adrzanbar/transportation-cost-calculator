@@ -13,10 +13,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: #413E76;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: #47B8B4;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
@@ -40,10 +40,10 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
-    --color-1: #413e76;
-    --color-2: #447b95;
-    --color-3: #47b8b4;
-    --color-4: #6c757d;
+    --color-1: #447B95;
+    --color-2: #458399;
+    --color-3: #458B9D;
+    --color-4: #469AA5;
   }
 
   .dark {
