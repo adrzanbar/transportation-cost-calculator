@@ -19,7 +19,6 @@ import {
 } from "./ui/select";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { calculate } from "@/actions";
 import { Vehicle } from "@prisma/client";
 import {
   calculateAnnualCostStructure,
@@ -86,9 +85,12 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
   );
 
   return (
-    <div>
+    <div className="grid grid-cols-2 gap-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(() => console.log(form.getValues()))}>
+        <form
+          onSubmit={form.handleSubmit(() => console.log(form.getValues()))}
+          className="grid grid-cols-2 gap-4"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -120,6 +122,7 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
               e.preventDefault();
               form.reset({ ...vehicle });
             }}
+            className="self-end"
           >
             Valores por defecto
           </Button>
@@ -351,26 +354,31 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
               </FormItem>
             )}
           />
-          <div>
-            <AnnualCostPieChart
-              costData={Object.values(
-                calculateAnnualCostStructure({
-                  ...vehicle,
-                  ...params,
-                })
-              )}
-              label="Estructura de costes anuales"
-            />
-            <AnnualCostPieChart
-              costData={Object.values(
-                calculateAnnualCostStructure({ ...vehicle })
-              )}
-              label="Datos estadísticos"
-            />
-          </div>
-          <Button type="submit">Calcular</Button>
+          <Button type="submit" className="col-span-2">
+            Calcular
+          </Button>
         </form>
       </Form>
+      <div className="space-y-4">
+        <h2 className="text-center text-lg">Estructura de costes anuales</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <AnnualCostPieChart
+            costData={Object.values(
+              calculateAnnualCostStructure({
+                ...vehicle,
+                ...params,
+              })
+            )}
+            label="Mis datos"
+          />
+          <AnnualCostPieChart
+            costData={Object.values(
+              calculateAnnualCostStructure({ ...vehicle })
+            )}
+            label="Datos estadísticos"
+          />
+        </div>
+      </div>
     </div>
   );
 }
