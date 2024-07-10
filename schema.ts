@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const zodNumber = z
+export const zodNumber = z.coerce
   .number({
     required_error: "Este campo es requerido",
     invalid_type_error: "Este campo debe ser un número",

@@ -11,9 +11,23 @@ export async function calculate(formData: CalculatorFormData) {
   }
   const vehicle = await db.vehicle.findUnique({
     select: {
-      interestRate: true,
+      kilometersTraveledAnnualy: true,
+      vehicleAcquisitionValue: true,
+      vehicleUsefulLife: true,
+      vehicleResidualValue: true,
+      trailerAcquisitionValue: true,
+      trailerUsefulLife: true,
+      trailerResidualValue: true,
+      otherCosts: true,
+      driversAnnualPerDiem: true,
+      annualInsuranceCosts: true,
+      annualFiscalCost: true,
+      fuelPrice: true,
+      averageConsumption: true,
+      indirectCosts: true,
       costPerTirePerKm: true,
       maintenanceCostPerKm: true,
+      interestRate: true,
     },
     where: {
       name: validation.data.name,
@@ -22,10 +36,22 @@ export async function calculate(formData: CalculatorFormData) {
   if (!vehicle) {
     return { error: "Vehicle not found" };
   }
-  const params = calculateAnnualCostStructure({
-    ...validation.data,
-    ...vehicle,
-  });
-  const path = Object.values(params).join("/");
+  console.log("vehicle", vehicle);
+  console.log("data", validation.data);
+  console.log("result", calculateAnnualCostStructure({ ...vehicle, ...validation.data }));
+  console.log("statistics", calculateAnnualCostStructure({ ...vehicle }))
+  const path = [
+    ...Object.values(
+      calculateAnnualCostStructure({
+        ...vehicle,
+        ...validation.data,
+      })
+    ),
+    ...Object.values(
+      calculateAnnualCostStructure({
+        ...vehicle,
+      })
+    ),
+  ].join("/");
   return redirect(`/results/${path}`);
 }

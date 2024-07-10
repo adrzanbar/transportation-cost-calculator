@@ -30,14 +30,19 @@ export const calculateAmortizationAndFinancialExpenses = (
   trailerUsefulLife: number,
   trailerResidualValue: number
 ) =>
-  (vehicleAcquisitionValue - vehicleResidualValue) / vehicleUsefulLife +
-  (vehicleAcquisitionValue - vehicleResidualValue) *
-    (-1 / vehicleUsefulLife +
-      interestRate / (1 - Math.pow(1 + interestRate, -vehicleUsefulLife))) +
-  (trailerAcquisitionValue - trailerResidualValue) / trailerUsefulLife +
-  (trailerAcquisitionValue - trailerResidualValue) *
-    (-1 / trailerUsefulLife +
-      interestRate / (1 - Math.pow(1 + interestRate, -trailerUsefulLife)));
+  trailerUsefulLife === 0
+    ? (vehicleAcquisitionValue - vehicleResidualValue) / vehicleUsefulLife +
+      (vehicleAcquisitionValue - vehicleResidualValue) *
+        (-1 / vehicleUsefulLife +
+          interestRate / (1 - Math.pow(1 + interestRate, -vehicleUsefulLife)))
+    : (vehicleAcquisitionValue - vehicleResidualValue) / vehicleUsefulLife +
+      (vehicleAcquisitionValue - vehicleResidualValue) *
+        (-1 / vehicleUsefulLife +
+          interestRate / (1 - Math.pow(1 + interestRate, -vehicleUsefulLife))) +
+      (trailerAcquisitionValue - trailerResidualValue) / trailerUsefulLife +
+      (trailerAcquisitionValue - trailerResidualValue) *
+        (-1 / trailerUsefulLife +
+          interestRate / (1 - Math.pow(1 + interestRate, -trailerUsefulLife)));
 
 export const calculatePersonnel = (
   otherCosts: number,
@@ -57,23 +62,17 @@ export const calculateFuelTireRepairAndMaintenance = (
   averageConsumption: number,
   costPerTirePerKm: number,
   maintenanceCostPerKm: number
-) => {
-  const a = calculateAnnualFuelExpense(
+) =>
+  calculateAnnualFuelExpense(
     kilometersTraveledAnnualy,
     fuelPrice,
     averageConsumption
-  );
-  const b = calculateAnnualTireExpense(
-    kilometersTraveledAnnualy,
-    costPerTirePerKm
-  );
-  const c = calculateAnnualMaintenanceExpense(
+  ) +
+  calculateAnnualTireExpense(kilometersTraveledAnnualy, costPerTirePerKm) +
+  calculateAnnualMaintenanceExpense(
     kilometersTraveledAnnualy,
     maintenanceCostPerKm
   );
-  console.log(a, b, c);
-  return a + b + c;
-};
 
 export const calculateAnnualCostStructure = ({
   kilometersTraveledAnnualy,

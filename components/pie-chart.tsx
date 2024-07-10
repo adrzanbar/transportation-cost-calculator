@@ -4,14 +4,7 @@ import * as React from "react";
 import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -71,7 +64,13 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function AnnualCostPieChart({ costData }: { costData: number[] }) {
+export function AnnualCostPieChart({
+  costData,
+  label,
+}: {
+  costData: number[];
+  label: string;
+}) {
   React.useEffect(() => {
     for (let i = 0; i < costData.length; i++) {
       chartData[i].cost = costData[i];
@@ -84,7 +83,7 @@ export function AnnualCostPieChart({ costData }: { costData: number[] }) {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Estructura de costes anuales</CardTitle>
+        <CardTitle>{label}</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
