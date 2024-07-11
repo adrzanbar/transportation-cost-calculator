@@ -62,7 +62,7 @@ export function CostTable({
   });
   return (
     <Table>
-      <TableCaption>Costes Medios</TableCaption>
+      <TableCaption>Costos Medios</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Costo</TableHead>
@@ -74,8 +74,16 @@ export function CostTable({
         {costs.map((cost) => (
           <TableRow key={cost.name}>
             <TableCell className="font-medium">{cost.name}</TableCell>
-            <TableCell>{cost.user}</TableCell>
-            <TableCell>{cost.stats}</TableCell>
+            <TableCell className="text-right">
+              {Number.isFinite(cost.user)
+                ? parseFloat(cost.user.toFixed(2))
+                : 0}
+            </TableCell>
+            <TableCell className="text-right">
+              {Number.isFinite(cost.stats)
+                ? parseFloat(cost.stats.toFixed(2))
+                : 0}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
