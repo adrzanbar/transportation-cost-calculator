@@ -11,11 +11,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-type Costs = {
-  time: number;
-  distance: number;
-};
-
 const chartData = [
   {
     category: "time",

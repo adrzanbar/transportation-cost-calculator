@@ -2,41 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// model Vehiculo {
-//   descripcion String @id
-
-//   parametroId Int @unique
-
-//   costoNeumaticosPorKm          Float
-//   costoMantenimientoPorKmSinIva Float
-//   tipoInteres                   Float
-//   parametro                     Parametro @relation(fields: [parametroId], references: [id])
-//   calculo                       Calculo[]
-// }
-
-// model Parametro {
-//   id Int @id @default(autoincrement())
-
-//   kilometrosRecorridosAnualmente                           Float
-//   horasTrabajadasAlAno                                     Float
-//   valorAdquisicionVehiculoSinIvaSinNeumaticos              Float
-//   vidaUtilVehiculo                                         Float
-//   valorResidualVehiculoSinIva                              Float
-//   valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos Float
-//   vidaUtilRemolqueSemirremolque                            Float
-//   valorResidualRemolqueSemirremolqueSinIva                 Float
-//   costoAnualConductorEmpresaSegurosSociosOtros             Float
-//   dietasAnualesConductor                                   Float
-//   costoAnualSeguros                                        Float
-//   costoFiscalAnual                                         Float
-//   precioCarburanteSinIva                                   Float
-//   consumoMedio                                             Float
-//   costosAnualesIndirectos                                  Float
-
-//   vehiculo Vehiculo?
-//   calculo  Calculo?
-// }
-
 const vehiculos = [
   {
     descripcion: "Vehículo articulado de 5 ejes (Larga distancia)",
@@ -64,14 +29,14 @@ const vehiculos = [
     },
   },
   {
-    descripcion: "Vehículo articulado de 3 ejes (Larga distancia)",
-    costoNeumaticosPorKm: 0.165,
+    descripcion: "Camión con caja volcadora (Corta distancia)",
+    costoNeumaticosPorKm: 0.825,
     costoMantenimientoPorKmSinIva: 0.02,
     tipoInteres: 0.05,
     parametro: {
       create: {
-        kilometrosRecorridosAnualmente: 175000,
-        horasTrabajadasAlAno: 2800,
+        kilometrosRecorridosAnualmente: 35000,
+        horasTrabajadasAlAno: 1800,
         valorAdquisicionVehiculoSinIvaSinNeumaticos: 74400,
         vidaUtilVehiculo: 10,
         valorResidualVehiculoSinIva: 9000,
@@ -84,32 +49,32 @@ const vehiculos = [
         costoFiscalAnual: 2466,
         precioCarburanteSinIva: 0.81,
         consumoMedio: 35,
-        costosAnualesIndirectos: 2459,
+        costosAnualesIndirectos: 2459.07,
       },
     },
   },
   {
-    descripcion: "Vehículo articulado de 2 ejes (Larga distancia)",
-    costoNeumaticosPorKm: 0.165,
-    costoMantenimientoPorKmSinIva: 0.02,
+    descripcion: "Minitruck pick-up (Corta distancia)",
+    costoNeumaticosPorKm: 0.216,
+    costoMantenimientoPorKmSinIva: 0.01,
     tipoInteres: 0.05,
     parametro: {
       create: {
-        kilometrosRecorridosAnualmente: 175000,
-        horasTrabajadasAlAno: 2800,
-        valorAdquisicionVehiculoSinIvaSinNeumaticos: 74400,
+        kilometrosRecorridosAnualmente: 20000,
+        horasTrabajadasAlAno: 2100,
+        valorAdquisicionVehiculoSinIvaSinNeumaticos: 28620,
         vidaUtilVehiculo: 10,
-        valorResidualVehiculoSinIva: 9000,
+        valorResidualVehiculoSinIva: 3300,
         valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 0,
         vidaUtilRemolqueSemirremolque: 0,
         valorResidualRemolqueSemirremolqueSinIva: 0,
-        costoAnualConductorEmpresaSegurosSociosOtros: 8700,
+        costoAnualConductorEmpresaSegurosSociosOtros: 8500,
         dietasAnualesConductor: 2104.8,
-        costoAnualSeguros: 2580,
-        costoFiscalAnual: 2466,
+        costoAnualSeguros: 1070,
+        costoFiscalAnual: 920,
         precioCarburanteSinIva: 0.81,
-        consumoMedio: 35,
-        costosAnualesIndirectos: 2459,
+        consumoMedio: 17,
+        costosAnualesIndirectos: 1251,
       },
     },
   },

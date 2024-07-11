@@ -11,13 +11,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-type Costs = {
-  amorotizationAndFinancialExpenses: number;
-  personnel: number;
-  insuranceTaxesManagementAndMarketing: number;
-  fuelRepairAndMaintenance: number;
-};
-
 const chartData = [
   {
     category: "amortizationAndFinancialExpenses",

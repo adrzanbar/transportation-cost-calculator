@@ -47,14 +47,26 @@ const costs = [
   },
 ];
 
-export function CostTable() {
+export function CostTable({
+  user,
+  stats,
+}: {
+  user: number[];
+  stats: number[];
+}) {
+  user.forEach((value, index) => {
+    costs[index].user = value;
+  });
+  stats.forEach((value, index) => {
+    costs[index].stats = value;
+  });
   return (
     <Table>
       <TableCaption>Costes Medios</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Coste</TableHead>
-          <TableHead>Mis datos</TableHead>
+          <TableHead>Costo</TableHead>
+          <TableHead>Usuario</TableHead>
           <TableHead>Datos estadísticos</TableHead>
         </TableRow>
       </TableHeader>

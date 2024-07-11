@@ -126,6 +126,19 @@ const getAggregateData = (vehiculo: Vehiculo, parametro: Parametro) => {
     personal +
     segurosCostosFiscalesGestionComercializacion;
   const costosPorDistancia = combustibleNeumaticosReparacionesMantenimiento;
+  const costosTotales = costosPorTiempo + costosPorDistancia;
+  const costoTotalMedioPorKmFacturado =
+    costosTotales / parametro.kilometrosRecorridosAnualmente;
+  const costoTotalMedioPorHoraFacturada =
+    costosTotales / parametro.horasTrabajadasAlAno;
+  const costoPorDistanciaMediaPorKm =
+    costosPorDistancia / parametro.horasTrabajadasAlAno;
+  const costoPorTiempoMedioPorHora =
+    costosPorTiempo / parametro.valorResidualVehiculoSinIva;
+  const costosTotalesPorViajeroKilometro =
+    costosTotales /
+    parametro.kilometrosRecorridosAnualmente /
+    parametro.valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos;
   return {
     gastoAnualCarburanteSinIva,
     gastoAnualNeumaticos,
@@ -136,6 +149,11 @@ const getAggregateData = (vehiculo: Vehiculo, parametro: Parametro) => {
     combustibleNeumaticosReparacionesMantenimiento,
     costosPorTiempo,
     costosPorDistancia,
+    costoTotalMedioPorKmFacturado,
+    costoTotalMedioPorHoraFacturada,
+    costoPorDistanciaMediaPorKm,
+    costoPorTiempoMedioPorHora,
+    costosTotalesPorViajeroKilometro,
   };
 };
 
@@ -478,9 +496,6 @@ export default function Calculator({ vehiculos }: { vehiculos: Vehiculo[] }) {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full my-4">
-            Calcular
-          </Button>
         </form>
       </Form>
       <div className="space-y-4 min-w-[50vw]">
@@ -523,7 +538,26 @@ export default function Calculator({ vehiculos }: { vehiculos: Vehiculo[] }) {
           />
         </div>
         <div>
-          <CostTable />
+          <CostTable
+            user={[
+              aggregateData.costoTotalMedioPorKmFacturado,
+              aggregateData.costoTotalMedioPorHoraFacturada,
+              aggregateData.costosPorDistancia,
+              aggregateData.costoPorDistanciaMediaPorKm,
+              aggregateData.costosPorTiempo,
+              aggregateData.costoPorTiempoMedioPorHora,
+              aggregateData.costosTotalesPorViajeroKilometro,
+            ]}
+            stats={[
+              aggregateDataDatosEstadisticos.costoTotalMedioPorKmFacturado,
+              aggregateDataDatosEstadisticos.costoTotalMedioPorHoraFacturada,
+              aggregateDataDatosEstadisticos.costosPorDistancia,
+              aggregateDataDatosEstadisticos.costoPorDistanciaMediaPorKm,
+              aggregateDataDatosEstadisticos.costosPorTiempo,
+              aggregateDataDatosEstadisticos.costoPorTiempoMedioPorHora,
+              aggregateDataDatosEstadisticos.costosTotalesPorViajeroKilometro,
+            ]}
+          />
         </div>
       </div>
     </div>
