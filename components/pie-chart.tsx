@@ -11,46 +11,25 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  {
-    category: "time",
-    cost: 0,
-    fill: "hsl(var(--chart-1))",
-  },
-  {
-    category: "distance",
-    cost: 0,
-    fill: "hsl(var(--chart-2))",
-  },
-];
+type ChartData = {
+  category: string;
+  cost: number;
+  fill: string;
+};
 
-const chartConfig = {
-  visitors: {
-    label: "Costos anuales",
-  },
-  time: {
-    label: "Costes por tiempo",
-    color: "var(--color-1)",
-  },
-  distance: {
-    label: "Costes por distancia",
-    color: "var(--color-2)",
-  },
-} satisfies ChartConfig;
-
-export function TimeDistanceCostPieChart({
-  costData,
+export function MyPieChart({
+  chartDataList,
+  chartConfig,
   label,
 }: {
-  costData: number[];
+  chartDataList: ChartData[];
+  chartConfig: ChartConfig;
   label: string;
 }) {
-  for (let i = 0; i < costData.length; i++) {
-    chartData[i].cost = costData[i];
-  }
-  const totalCost = React.useMemo(() => {
-    return costData.reduce((acc, cost) => acc + cost, 0);
-  }, [costData]);
+  const totalCost = chartDataList.reduce(
+    (acc, chartData) => acc + chartData.cost,
+    0
+  );
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -67,7 +46,7 @@ export function TimeDistanceCostPieChart({
               content={<ChartTooltipContent hideLabel />}
             />
             <Pie
-              data={chartData}
+              data={chartDataList}
               dataKey="cost"
               nameKey="category"
               innerRadius={60}
