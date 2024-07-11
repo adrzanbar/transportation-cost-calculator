@@ -2,76 +2,123 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const vehicles = [
+// model Vehiculo {
+//   descripcion String @id
+
+//   parametroId Int @unique
+
+//   costoNeumaticosPorKm          Float
+//   costoMantenimientoPorKmSinIva Float
+//   tipoInteres                   Float
+//   parametro                     Parametro @relation(fields: [parametroId], references: [id])
+//   calculo                       Calculo[]
+// }
+
+// model Parametro {
+//   id Int @id @default(autoincrement())
+
+//   kilometrosRecorridosAnualmente                           Float
+//   horasTrabajadasAlAno                                     Float
+//   valorAdquisicionVehiculoSinIvaSinNeumaticos              Float
+//   vidaUtilVehiculo                                         Float
+//   valorResidualVehiculoSinIva                              Float
+//   valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos Float
+//   vidaUtilRemolqueSemirremolque                            Float
+//   valorResidualRemolqueSemirremolqueSinIva                 Float
+//   costoAnualConductorEmpresaSegurosSociosOtros             Float
+//   dietasAnualesConductor                                   Float
+//   costoAnualSeguros                                        Float
+//   costoFiscalAnual                                         Float
+//   precioCarburanteSinIva                                   Float
+//   consumoMedio                                             Float
+//   costosAnualesIndirectos                                  Float
+
+//   vehiculo Vehiculo?
+//   calculo  Calculo?
+// }
+
+const vehiculos = [
   {
-    name: "Vehículo articulado de 5 ejes (Larga distancia)",
-    kilometersTraveledAnnualy: 175000,
-    hoursWorkedPerYear: 2800,
-    vehicleAcquisitionValue: 119400,
-    vehicleUsefulLife: 10,
-    vehicleResidualValue: 14000,
-    trailerAcquisitionValue: 13800,
-    trailerUsefulLife: 10,
-    trailerResidualValue: 3000,
-    otherCosts: 9300,
-    driversAnnualPerDiem: 2512,
-    annualInsuranceCosts: 2980,
-    annualFiscalCost: 3830,
-    fuelPrice: 0.81,
-    averageConsumption: 42,
-    indirectCosts: 9101.29,
-    costPerTirePerKm: 0.2475,
-    maintenanceCostPerKm: 0.02,
-    interestRate: 0.05,
+    descripcion: "Vehículo articulado de 5 ejes (Larga distancia)",
+    costoNeumaticosPorKm: 0.2475,
+    costoMantenimientoPorKmSinIva: 0.02,
+    tipoInteres: 0.05,
+    parametro: {
+      create: {
+        kilometrosRecorridosAnualmente: 175000,
+        horasTrabajadasAlAno: 2800,
+        valorAdquisicionVehiculoSinIvaSinNeumaticos: 119400,
+        vidaUtilVehiculo: 10,
+        valorResidualVehiculoSinIva: 14000,
+        valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 13800,
+        vidaUtilRemolqueSemirremolque: 10,
+        valorResidualRemolqueSemirremolqueSinIva: 3000,
+        costoAnualConductorEmpresaSegurosSociosOtros: 9300,
+        dietasAnualesConductor: 2512,
+        costoAnualSeguros: 2980,
+        costoFiscalAnual: 3830,
+        precioCarburanteSinIva: 0.81,
+        consumoMedio: 42,
+        costosAnualesIndirectos: 9101.29,
+      },
+    },
   },
   {
-    name: "Camión con caja volcadora (Corta distancia)",
-    kilometersTraveledAnnualy: 35000,
-    hoursWorkedPerYear: 1800,
-    vehicleAcquisitionValue: 74400,
-    vehicleUsefulLife: 10,
-    vehicleResidualValue: 9000,
-    trailerAcquisitionValue: 0,
-    trailerUsefulLife: 0,
-    trailerResidualValue: 0,
-    otherCosts: 8700,
-    driversAnnualPerDiem: 2104.8,
-    annualInsuranceCosts: 2580,
-    annualFiscalCost: 2466,
-    fuelPrice: 0.81,
-    averageConsumption: 35,
-    indirectCosts: 2459,
-    costPerTirePerKm: 0.0825,
-    maintenanceCostPerKm: 0.02,
-    interestRate: 0.05,
+    descripcion: "Vehículo articulado de 3 ejes (Larga distancia)",
+    costoNeumaticosPorKm: 0.165,
+    costoMantenimientoPorKmSinIva: 0.02,
+    tipoInteres: 0.05,
+    parametro: {
+      create: {
+        kilometrosRecorridosAnualmente: 175000,
+        horasTrabajadasAlAno: 2800,
+        valorAdquisicionVehiculoSinIvaSinNeumaticos: 74400,
+        vidaUtilVehiculo: 10,
+        valorResidualVehiculoSinIva: 9000,
+        valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 0,
+        vidaUtilRemolqueSemirremolque: 0,
+        valorResidualRemolqueSemirremolqueSinIva: 0,
+        costoAnualConductorEmpresaSegurosSociosOtros: 8700,
+        dietasAnualesConductor: 2104.8,
+        costoAnualSeguros: 2580,
+        costoFiscalAnual: 2466,
+        precioCarburanteSinIva: 0.81,
+        consumoMedio: 35,
+        costosAnualesIndirectos: 2459,
+      },
+    },
   },
   {
-    name: "Minitruck pick-up (Corta distancia)",
-    kilometersTraveledAnnualy: 20000,
-    hoursWorkedPerYear: 2100,
-    vehicleAcquisitionValue: 28620,
-    vehicleUsefulLife: 10,
-    vehicleResidualValue: 3300,
-    trailerAcquisitionValue: 0,
-    trailerUsefulLife: 0,
-    trailerResidualValue: 0,
-    otherCosts: 8500,
-    driversAnnualPerDiem: 2104.8,
-    annualInsuranceCosts: 1070,
-    annualFiscalCost: 920,
-    fuelPrice: 0.81,
-    averageConsumption: 17,
-    indirectCosts: 1251.89,
-    costPerTirePerKm: 0.0216,
-    maintenanceCostPerKm: 0.01,
-    interestRate: 0.05,
+    descripcion: "Vehículo articulado de 2 ejes (Larga distancia)",
+    costoNeumaticosPorKm: 0.165,
+    costoMantenimientoPorKmSinIva: 0.02,
+    tipoInteres: 0.05,
+    parametro: {
+      create: {
+        kilometrosRecorridosAnualmente: 175000,
+        horasTrabajadasAlAno: 2800,
+        valorAdquisicionVehiculoSinIvaSinNeumaticos: 74400,
+        vidaUtilVehiculo: 10,
+        valorResidualVehiculoSinIva: 9000,
+        valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 0,
+        vidaUtilRemolqueSemirremolque: 0,
+        valorResidualRemolqueSemirremolqueSinIva: 0,
+        costoAnualConductorEmpresaSegurosSociosOtros: 8700,
+        dietasAnualesConductor: 2104.8,
+        costoAnualSeguros: 2580,
+        costoFiscalAnual: 2466,
+        precioCarburanteSinIva: 0.81,
+        consumoMedio: 35,
+        costosAnualesIndirectos: 2459,
+      },
+    },
   },
 ];
 
 async function main() {
-  vehicles.forEach(async (vehicle) => {
-    await prisma.vehicle.create({
-      data: vehicle,
+  vehiculos.forEach(async (vehiculo) => {
+    await prisma.vehiculo.create({
+      data: vehiculo,
     });
   });
 }

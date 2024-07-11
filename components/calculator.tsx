@@ -19,81 +19,190 @@ import {
 } from "./ui/select";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Vehicle } from "@prisma/client";
+import { AnnualCostPieChart } from "./category-pie-chart";
+import { TimeDistanceCostPieChart } from "./time-distance-pie-chart";
+import { CostTable } from "./table";
+import { z } from "zod";
+import { calculatorFormSchema } from "./calculator-schema";
 import {
-  calculateAnnualCostStructure,
-  calculateAnnualFuelExpense,
-  calculateAnnualMaintenanceExpense,
-  calculateAnnualTireExpense,
-} from "@/lib/utils";
-import { CalculatorFormData, calculatorFormSchema } from "@/schema";
-import { AnnualCostPieChart } from "./pie-chart";
-import { useMemo } from "react";
+  Vehiculo as PrismaVehiculo,
+  Parametro as PrismaParametro,
+} from "@prisma/client";
 
-const defaultVehicle = {
-  name: "",
-  kilometersTraveledAnnualy: 0,
-  hoursWorkedPerYear: 0,
-  vehicleAcquisitionValue: 0,
-  vehicleUsefulLife: 0,
-  vehicleResidualValue: 0,
-  trailerAcquisitionValue: 0,
-  trailerUsefulLife: 0,
-  trailerResidualValue: 0,
-  otherCosts: 0,
-  driversAnnualPerDiem: 0,
-  annualInsuranceCosts: 0,
-  annualFiscalCost: 0,
-  fuelPrice: 0,
-  averageConsumption: 0,
-  indirectCosts: 0,
-  costPerTirePerKm: 0,
-  maintenanceCostPerKm: 0,
-  interestRate: 0,
+type Parametro = Omit<PrismaParametro, "id">;
+
+type Vehiculo = Omit<PrismaVehiculo, "parametroId"> & {
+  parametro: Parametro;
 };
 
-export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
+type CalculatorFormData = z.infer<typeof calculatorFormSchema>;
+
+const getGastoAnualCarburanteSinIva = (parametro: Parametro) =>
+  (parametro.kilometrosRecorridosAnualmente / 100) *
+  parametro.consumoMedio *
+  parametro.precioCarburanteSinIva;
+
+const getGastoAnualNeumaticos = (vehiculo: Vehiculo, parametro: Parametro) =>
+  vehiculo.costoNeumaticosPorKm * parametro.kilometrosRecorridosAnualmente;
+
+const getGastoAnualMantenimientoSinIva = (
+  vehiculo: Vehiculo,
+  parametro: Parametro
+) =>
+  parametro.kilometrosRecorridosAnualmente *
+  vehiculo.costoMantenimientoPorKmSinIva;
+
+const getAmortizacionYGastosFinancieros = (
+  vehiculo: Vehiculo,
+  parametro: Parametro
+) => {
+  let amortizacionYGastosFinancierosVehiculo = 0;
+  let amortizacionYGastosFinancierosRemolqueSemirremolque = 0;
+
+  if (parametro.vidaUtilVehiculo !== 0)
+    amortizacionYGastosFinancierosVehiculo =
+      (parametro.valorAdquisicionVehiculoSinIvaSinNeumaticos -
+        parametro.valorResidualVehiculoSinIva) /
+        parametro.vidaUtilVehiculo +
+      (parametro.valorAdquisicionVehiculoSinIvaSinNeumaticos -
+        parametro.valorResidualVehiculoSinIva) *
+        (-1 / parametro.vidaUtilVehiculo +
+          vehiculo.tipoInteres /
+            (1 -
+              Math.pow(1 + vehiculo.tipoInteres, -parametro.vidaUtilVehiculo)));
+  if (parametro.vidaUtilRemolqueSemirremolque !== 0)
+    amortizacionYGastosFinancierosRemolqueSemirremolque =
+      (parametro.valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos -
+        parametro.valorResidualRemolqueSemirremolqueSinIva) /
+        parametro.vidaUtilRemolqueSemirremolque +
+      (parametro.valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos -
+        parametro.valorResidualRemolqueSemirremolqueSinIva) *
+        (-1 / parametro.vidaUtilRemolqueSemirremolque +
+          vehiculo.tipoInteres /
+            (1 -
+              Math.pow(
+                1 + vehiculo.tipoInteres,
+                -parametro.vidaUtilRemolqueSemirremolque
+              )));
+
+  return (
+    amortizacionYGastosFinancierosVehiculo +
+    amortizacionYGastosFinancierosRemolqueSemirremolque
+  );
+};
+
+const getPersonal = (parametro: Parametro) =>
+  parametro.costoAnualConductorEmpresaSegurosSociosOtros +
+  parametro.dietasAnualesConductor;
+
+const getSegurosCostosFiscalesGestionComercializacion = (
+  parametro: Parametro
+) =>
+  parametro.costoAnualSeguros +
+  parametro.costoFiscalAnual +
+  parametro.precioCarburanteSinIva +
+  parametro.costosAnualesIndirectos;
+
+const getAggregateData = (vehiculo: Vehiculo, parametro: Parametro) => {
+  const gastoAnualCarburanteSinIva = getGastoAnualCarburanteSinIva(parametro);
+  const gastoAnualNeumaticos = getGastoAnualNeumaticos(vehiculo, parametro);
+  const gastoAnualMantenimientoSinIva = getGastoAnualMantenimientoSinIva(
+    vehiculo,
+    parametro
+  );
+  const amortizacionYGastosFinancieros = getAmortizacionYGastosFinancieros(
+    vehiculo,
+    parametro
+  );
+  const personal = getPersonal(parametro);
+  const segurosCostosFiscalesGestionComercializacion =
+    getSegurosCostosFiscalesGestionComercializacion(parametro);
+  const combustibleNeumaticosReparacionesMantenimiento =
+    gastoAnualCarburanteSinIva +
+    gastoAnualNeumaticos +
+    gastoAnualMantenimientoSinIva;
+  const costosPorTiempo =
+    amortizacionYGastosFinancieros +
+    personal +
+    segurosCostosFiscalesGestionComercializacion;
+  const costosPorDistancia = combustibleNeumaticosReparacionesMantenimiento;
+  return {
+    gastoAnualCarburanteSinIva,
+    gastoAnualNeumaticos,
+    gastoAnualMantenimientoSinIva,
+    amortizacionYGastosFinancieros,
+    personal,
+    segurosCostosFiscalesGestionComercializacion,
+    combustibleNeumaticosReparacionesMantenimiento,
+    costosPorTiempo,
+    costosPorDistancia,
+  };
+};
+
+export default function Calculator({ vehiculos }: { vehiculos: Vehiculo[] }) {
   const form = useForm<CalculatorFormData>({
     resolver: zodResolver(calculatorFormSchema),
     defaultValues: {
-      name: "",
-      kilometersTraveledAnnualy: 0,
-      hoursWorkedPerYear: 0,
-      vehicleAcquisitionValue: 0,
-      vehicleUsefulLife: 0,
-      vehicleResidualValue: 0,
-      trailerAcquisitionValue: 0,
-      trailerUsefulLife: 0,
-      trailerResidualValue: 0,
-      otherCosts: 0,
-      driversAnnualPerDiem: 0,
-      annualInsuranceCosts: 0,
-      annualFiscalCost: 0,
-      fuelPrice: 0,
-      averageConsumption: 0,
-      indirectCosts: 0,
+      descripcion: "",
+      kilometrosRecorridosAnualmente: 0,
+      horasTrabajadasAlAno: 0,
+      valorAdquisicionVehiculoSinIvaSinNeumaticos: 0,
+      vidaUtilVehiculo: 0,
+      valorResidualVehiculoSinIva: 0,
+      valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 0,
+      vidaUtilRemolqueSemirremolque: 0,
+      valorResidualRemolqueSemirremolqueSinIva: 0,
+      costoAnualConductorEmpresaSegurosSociosOtros: 0,
+      dietasAnualesConductor: 0,
+      costoAnualSeguros: 0,
+      costoFiscalAnual: 0,
+      precioCarburanteSinIva: 0,
+      consumoMedio: 0,
+      costosAnualesIndirectos: 0,
     },
   });
 
-  const params = form.watch();
+  const formData = form.watch();
 
-  const vehicle = useMemo(
-    () =>
-      vehicles.find((vehicle) => vehicle.name === params.name) ||
-      defaultVehicle,
-    [vehicles, params.name]
+  const vehiculo = vehiculos.find(
+    (vehiculo) => vehiculo.descripcion === formData.descripcion
+  ) || {
+    descripcion: "",
+    costoNeumaticosPorKm: 0,
+    costoMantenimientoPorKmSinIva: 0,
+    tipoInteres: 0,
+    parametro: {
+      kilometrosRecorridosAnualmente: 0,
+      horasTrabajadasAlAno: 0,
+      valorAdquisicionVehiculoSinIvaSinNeumaticos: 0,
+      vidaUtilVehiculo: 0,
+      valorResidualVehiculoSinIva: 0,
+      valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos: 0,
+      vidaUtilRemolqueSemirremolque: 0,
+      valorResidualRemolqueSemirremolqueSinIva: 0,
+      costoAnualConductorEmpresaSegurosSociosOtros: 0,
+      dietasAnualesConductor: 0,
+      costoAnualSeguros: 0,
+      costoFiscalAnual: 0,
+      precioCarburanteSinIva: 0,
+      consumoMedio: 0,
+      costosAnualesIndirectos: 0,
+    },
+  };
+
+  const aggregateData = getAggregateData(vehiculo, formData);
+  const aggregateDataDatosEstadisticos = getAggregateData(
+    vehiculo,
+    vehiculo.parametro
   );
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="flex flex-row gap-4">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(() => console.log(form.getValues()))}
-          className="grid grid-cols-2 gap-4"
-        >
+        <form onSubmit={form.handleSubmit(() => console.log(form.getValues()))}>
           <FormField
             control={form.control}
-            name="name"
+            name="descripcion"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Vehículo</FormLabel>
@@ -107,9 +216,12 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {vehicles.map((vehicle) => (
-                      <SelectItem key={vehicle.name} value={vehicle.name}>
-                        {vehicle.name}
+                    {vehiculos.map((vehiculo) => (
+                      <SelectItem
+                        key={vehiculo.descripcion}
+                        value={vehiculo.descripcion}
+                      >
+                        {vehiculo.descripcion}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -120,15 +232,15 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           <Button
             onClick={(e) => {
               e.preventDefault();
-              form.reset({ ...vehicle });
+              form.reset({ ...vehiculo, ...vehiculo.parametro });
             }}
-            className="self-end"
+            className="w-full my-4"
           >
             Valores por defecto
           </Button>
           <FormField
             control={form.control}
-            name="kilometersTraveledAnnualy"
+            name="kilometrosRecorridosAnualmente"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Kilómetros recorridos anualmente</FormLabel>
@@ -141,10 +253,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="hoursWorkedPerYear"
+            name="horasTrabajadasAlAno"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Horas trabajadas por año</FormLabel>
+                <FormLabel>Horas trabajadas al año</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -154,10 +266,13 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="vehicleAcquisitionValue"
+            name="valorAdquisicionVehiculoSinIvaSinNeumaticos"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor de adquisición del vehículo</FormLabel>
+                <FormLabel>
+                  Valor de adquisición del vehículo sin IVA y sin neumáticos
+                  (US$)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -167,10 +282,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="vehicleUsefulLife"
+            name="vidaUtilVehiculo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Vida útil del vehículo</FormLabel>
+                <FormLabel>Vida útil del vehículo (años)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -180,10 +295,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="vehicleResidualValue"
+            name="valorResidualVehiculoSinIva"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor residual del vehículo</FormLabel>
+                <FormLabel>Valor residual sin IVA del vehículo (US$)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -193,10 +308,13 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="trailerAcquisitionValue"
+            name="valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor de adquisición del remolque</FormLabel>
+                <FormLabel>
+                  Valor de adquisición del remolque-semirremolque sin IVA y sin
+                  neumáticos (US$)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -206,10 +324,12 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="trailerUsefulLife"
+            name="vidaUtilRemolqueSemirremolque"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Vida útil del remolque</FormLabel>
+                <FormLabel>
+                  Vida útil del remolque-semirremolque (años)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -219,10 +339,12 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="trailerResidualValue"
+            name="valorResidualRemolqueSemirremolqueSinIva"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Valor residual del remolque</FormLabel>
+                <FormLabel>
+                  Valor residual del remolque-semirremolque sin IVA (US$)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -232,10 +354,13 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="otherCosts"
+            name="costoAnualConductorEmpresaSegurosSociosOtros"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Otros costos</FormLabel>
+                <FormLabel>
+                  Costo total anual del conductor, incluidos costos de empresa,
+                  Seg. Soc y otros (US$)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -245,10 +370,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="driversAnnualPerDiem"
+            name="dietasAnualesConductor"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Viáticos anuales de los conductores</FormLabel>
+                <FormLabel>Dietas anuales del conductor (US$)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -258,10 +383,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="annualInsuranceCosts"
+            name="costoAnualSeguros"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Costos anuales de seguro</FormLabel>
+                <FormLabel>Costo total anual de los seguros (US$)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -271,10 +396,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="annualFiscalCost"
+            name="costoFiscalAnual"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Costos fiscales anuales</FormLabel>
+                <FormLabel>Costo fiscal total anual (US$)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -284,10 +409,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="fuelPrice"
+            name="precioCarburanteSinIva"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Precio del combustible</FormLabel>
+                <FormLabel>Precio carburante sin IVA (US$/litro)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -297,10 +422,10 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
           />
           <FormField
             control={form.control}
-            name="averageConsumption"
+            name="consumoMedio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Consumo promedio</FormLabel>
+                <FormLabel>Consumo medio (litros/100km)</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -309,44 +434,43 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
             )}
           />
           <FormItem>
-            <FormLabel>Gasto total anual en carburante</FormLabel>
+            <FormLabel>
+              Gasto total anual en carburante, sin IVA (US$)
+            </FormLabel>
             <FormControl>
               <Input
                 disabled
-                value={calculateAnnualFuelExpense({ ...params })}
+                value={aggregateData.gastoAnualCarburanteSinIva}
               />
             </FormControl>
             <FormMessage />
           </FormItem>
           <FormItem>
-            <FormLabel>Gasto total anual en neumáticos</FormLabel>
+            <FormLabel>Gasto total anual en neumáticos (US$)</FormLabel>
             <FormControl>
-              <Input
-                disabled
-                value={calculateAnnualTireExpense({ ...vehicle, ...params })}
-              />
+              <Input disabled value={aggregateData.gastoAnualNeumaticos} />
             </FormControl>
             <FormMessage />
           </FormItem>
           <FormItem>
-            <FormLabel>Gasto total anual en mantenimiento</FormLabel>
+            <FormLabel>Gasto anual en mantenimiento sin IVA (US$)</FormLabel>
             <FormControl>
               <Input
                 disabled
-                value={calculateAnnualMaintenanceExpense({
-                  ...vehicle,
-                  ...params,
-                })}
+                value={aggregateData.gastoAnualMantenimientoSinIva}
               />
             </FormControl>
             <FormMessage />
           </FormItem>
           <FormField
             control={form.control}
-            name="indirectCosts"
+            name="costosAnualesIndirectos"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Costos indirectos</FormLabel>
+                <FormLabel>
+                  Total costos anuales indirectos repercutibles a este vehículo
+                  (US$)
+                </FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -354,29 +478,52 @@ export default function Calculator({ vehicles }: { vehicles: Vehicle[] }) {
               </FormItem>
             )}
           />
-          <Button type="submit" className="col-span-2">
+          <Button type="submit" className="w-full my-4">
             Calcular
           </Button>
         </form>
       </Form>
-      <div className="space-y-4">
-        <h2 className="text-center text-lg">Estructura de costes anuales</h2>
+      <div className="space-y-4 min-w-[50vw]">
+        <h2 className="text-center text-lg">Estructura de costos anuales</h2>
         <div className="grid grid-cols-2 gap-4">
           <AnnualCostPieChart
-            costData={Object.values(
-              calculateAnnualCostStructure({
-                ...vehicle,
-                ...params,
-              })
-            )}
-            label="Mis datos"
+            costData={[
+              aggregateData.amortizacionYGastosFinancieros,
+              aggregateData.personal,
+              aggregateData.segurosCostosFiscalesGestionComercializacion,
+              aggregateData.combustibleNeumaticosReparacionesMantenimiento,
+            ]}
+            label="Usuario"
           />
           <AnnualCostPieChart
-            costData={Object.values(
-              calculateAnnualCostStructure({ ...vehicle })
-            )}
+            costData={[
+              aggregateDataDatosEstadisticos.amortizacionYGastosFinancieros,
+              aggregateDataDatosEstadisticos.personal,
+              aggregateDataDatosEstadisticos.segurosCostosFiscalesGestionComercializacion,
+              aggregateDataDatosEstadisticos.combustibleNeumaticosReparacionesMantenimiento,
+            ]}
             label="Datos estadísticos"
           />
+        </div>
+        <h2 className="text-center text-lg">Costos: Tiempo vs Distancia</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <TimeDistanceCostPieChart
+            costData={[
+              aggregateData.costosPorTiempo,
+              aggregateData.costosPorDistancia,
+            ]}
+            label="Usuario"
+          />
+          <TimeDistanceCostPieChart
+            costData={[
+              aggregateDataDatosEstadisticos.costosPorTiempo,
+              aggregateDataDatosEstadisticos.costosPorDistancia,
+            ]}
+            label="Datos estadísticos"
+          />
+        </div>
+        <div>
+          <CostTable />
         </div>
       </div>
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { TrendingUp } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,32 +12,20 @@ import {
 } from "@/components/ui/chart";
 
 type Costs = {
-  amorotizationAndFinancialExpenses: number;
-  personnel: number;
-  insuranceTaxesManagementAndMarketing: number;
-  fuelRepairAndMaintenance: number;
+  time: number;
+  distance: number;
 };
 
 const chartData = [
   {
-    category: "amortizationAndFinancialExpenses",
+    category: "time",
     cost: 0,
     fill: "hsl(var(--chart-1))",
   },
   {
-    category: "personnel",
+    category: "distance",
     cost: 0,
     fill: "hsl(var(--chart-2))",
-  },
-  {
-    category: "insuranceTaxesManagementAndMarketing",
-    cost: 0,
-    fill: "hsl(var(--chart-3))",
-  },
-  {
-    category: "fuelRepairAndMaintenance",
-    cost: 0,
-    fill: "hsl(var(--chart-4))",
   },
 ];
 
@@ -46,25 +33,17 @@ const chartConfig = {
   visitors: {
     label: "Costos anuales",
   },
-  amortizationAndFinancialExpenses: {
-    label: "Amortización y gastos financieros",
+  time: {
+    label: "Costes por tiempo",
     color: "var(--color-1)",
   },
-  personnel: {
-    label: "Personal",
+  distance: {
+    label: "Costes por distancia",
     color: "var(--color-2)",
-  },
-  insuranceTaxesManagementAndMarketing: {
-    label: "Seguros, costes fiscales, gestión y comercialización",
-    color: "var(--color-3)",
-  },
-  fuelRepairAndMaintenance: {
-    label: "Combustible, neumáticos, reparaciones, mantenimiento",
-    color: "var(--color-4)",
   },
 } satisfies ChartConfig;
 
-export function AnnualCostPieChart({
+export function TimeDistanceCostPieChart({
   costData,
   label,
 }: {

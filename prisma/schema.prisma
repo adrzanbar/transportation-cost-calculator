@@ -7,27 +7,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Vehicle {
-  name String @id
-  // can change
-  kilometersTraveledAnnualy Float
-  hoursWorkedPerYear        Float
-  vehicleAcquisitionValue   Float
-  vehicleUsefulLife         Float
-  vehicleResidualValue      Float
-  trailerAcquisitionValue   Float
-  trailerUsefulLife         Float
-  trailerResidualValue      Float
-  otherCosts                Float
-  driversAnnualPerDiem      Float
-  annualInsuranceCosts      Float
-  annualFiscalCost          Float
-  fuelPrice                 Float
-  averageConsumption        Float
-  indirectCosts             Float
-  // user cannot change
-  costPerTirePerKm          Float
-  maintenanceCostPerKm      Float
-  // do not expose
-  interestRate Float
+model Vehiculo {
+  descripcion String @id
+
+  parametroId Int @unique
+
+  costoNeumaticosPorKm          Float
+  costoMantenimientoPorKmSinIva Float
+  tipoInteres                   Float
+  parametro                     Parametro @relation(fields: [parametroId], references: [id])
+  calculo                       Calculo[]
+}
+
+model Parametro {
+  id Int @id @default(autoincrement())
+
+  kilometrosRecorridosAnualmente                           Float
+  horasTrabajadasAlAno                                     Float
+  valorAdquisicionVehiculoSinIvaSinNeumaticos              Float
+  vidaUtilVehiculo                                         Float
+  valorResidualVehiculoSinIva                              Float
+  valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos Float
+  vidaUtilRemolqueSemirremolque                            Float
+  valorResidualRemolqueSemirremolqueSinIva                 Float
+  costoAnualConductorEmpresaSegurosSociosOtros             Float
+  dietasAnualesConductor                                   Float
+  costoAnualSeguros                                        Float
+  costoFiscalAnual                                         Float
+  precioCarburanteSinIva                                   Float
+  consumoMedio                                             Float
+  costosAnualesIndirectos                                  Float
+
+  vehiculo Vehiculo?
+  calculo  Calculo?
+}
+
+model Calculo {
+  id Int @id @default(autoincrement())
+
+  vehiculoDescripcion String @unique
+  parametroId         Int    @unique
+
+  createdAt DateTime  @default(now())
+  vehiculo  Vehiculo  @relation(fields: [vehiculoDescripcion], references: [descripcion])
+  parametro Parametro @relation(fields: [parametroId], references: [id])
 }
