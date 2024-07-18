@@ -27,84 +27,21 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Vehiculo } from "@prisma/client";
 
-const costosVehiculos = [
-    {
-        nombre: "Vehículo articulado de 5 ejes (Larga distancia)",
-        // interes: 0.05,
-        // mantenimiento: 0.02,
-        neumaticos: 0.2475,
-        parametros: {
-            neumaticos: 0.2475,
-            km: 175000,
-            horas: 2800,
-            adquisicion: 119400,
-            vidaUtil: 10,
-            residual: 14000,
-            remolque: 13800,
-            vidaUtilRemolque: 10,
-            residualRemolque: 3000,
-            conductor: 9300,
-            dietas: 2512.8,
-            seguros: 2980,
-            fiscal: 3830,
-            carburante: 0.81,
-            consumo: 42,
-            indirectos: 9101,
-        },
-    },
-    {
-        nombre: "Camión con caja volcadora (Corta distancia)",
-        // interes: 0.05,
-        // mantenimiento: 0.02,
-        neumaticos: 0.0825,
-        parametros: {
-            km: 35000,
-            horas: 1800,
-            adquisicion: 74800,
-            vidaUtil: 10,
-            residual: 9000,
-            remolque: 0,
-            vidaUtilRemolque: 0,
-            residualRemolque: 0,
-            conductor: 8700,
-            dietas: 2104.8,
-            seguros: 2580,
-            fiscal: 2466,
-            carburante: 0.81,
-            consumo: 35,
-            indirectos: 2459.07,
-        },
-    },
-    {
-        nombre: "Minitruck pick-up (Corta distancia)",
-        // interes: 0.05,
-        // mantenimiento: 0.01,
-        neumaticos: 0.0216,
-        parametros: {
-            km: 20000,
-            horas: 2100,
-            adquisicion: 28620,
-            vidaUtil: 10,
-            residual: 3300,
-            remolque: 0,
-            vidaUtilRemolque: 0,
-            residualRemolque: 0,
-            conductor: 8500,
-            dietas: 2104.8,
-            seguros: 1070,
-            fiscal: 920,
-            carburante: 0.81,
-            consumo: 17,
-            indirectos: 1251.89,
-        },
-    },
-];
-
-const coerceNumberNonNegative = z.coerce.number().nonnegative();
+const coerceNumberNonNegative = z.coerce.number({ coerce: true }).nonnegative();
 
 const formSchema = z.object({
     nombre: z.string(),
+    kmCarga: coerceNumberNonNegative,
+    kmVacio: coerceNumberNonNegative,
+    consumo: coerceNumberNonNegative,
+    horasCarga: coerceNumberNonNegative,
+    horasVacio: coerceNumberNonNegative,
+    horasParalizacion: coerceNumberNonNegative,
+    peajes: coerceNumberNonNegative,
+    otros: coerceNumberNonNegative,
+    dolar: coerceNumberNonNegative,
     parametros: z.object({
         km: coerceNumberNonNegative,
         horas: coerceNumberNonNegative,
@@ -123,18 +60,90 @@ const formSchema = z.object({
         indirectos: coerceNumberNonNegative,
     }),
 });
-export default function CalculatorForm() {
+export default function CalculatorForm({
+    vehiculos,
+    dolar,
+}: {
+    vehiculos: Vehiculo[];
+    dolar: number;
+}) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: costosVehiculos[0],
+        defaultValues: {
+            ...vehiculos[0],
+            dolar,
+            kmCarga: 0,
+            kmVacio: 0,
+            consumo: 0,
+            horasCarga: 0,
+            horasVacio: 0,
+            horasParalizacion: 0,
+            peajes: 0,
+            otros: 0,
+        },
     });
-    const [nombre, km, consumo, carburante] = form.watch([
+    const [nombre, ...formData] = form.watch([
         "nombre",
+        "parametros.horas",
         "parametros.km",
-        "parametros.consumo",
+        "parametros.adquisicion",
+        "parametros.vidaUtil",
+        "parametros.residual",
+        "parametros.remolque",
+        "parametros.vidaUtilRemolque",
+        "parametros.residualRemolque",
+        "parametros.conductor",
+        "parametros.seguros",
+        "parametros.fiscal",
+        "parametros.dietas",
         "parametros.carburante",
+        "parametros.consumo",
+        "parametros.indirectos",
+        "kmCarga",
+        "kmVacio",
+        "horasCarga",
+        "horasVacio",
+        "horasParalizacion",
+        "peajes",
     ]);
-    const vehiculo = costosVehiculos.find((cv) => cv.nombre === nombre);
+    const [
+        km,
+        horas,
+        adquisicion,
+        vidaUtil,
+        residual,
+        remolque,
+        vidaUtilRemolque,
+        residualRemolque,
+        conductor,
+        dietas,
+        seguros,
+        fiscal,
+        carburante,
+        consumo,
+        indirectos,
+        kmCarga,
+        kmVacio,
+        horasCarga,
+        horasVacio,
+        horasParalizacion,
+        peajes,
+    ] = formData.map(Number);
+    const vehiculo = vehiculos.find((v) => v.nombre === nombre);
+    const kmServicio = (kmCarga || 0) + (kmVacio || 0);
+    const neumaticos = (vehiculo?.neumaticos || 0) * km;
+    const mantenimiento = (vehiculo?.mantenimiento || 0) * km;
+    const horasServicio =
+        (horasCarga || 0) + (horasVacio || 0) + (horasParalizacion || 0);
+    const vehiculoAmortizacion =
+        (adquisicion - residual) / vidaUtil +
+        (((adquisicion - residual) / -vidaUtil) * (vehiculo?.interes || 0)) /
+            (1 - Math.pow(1 + (vehiculo?.interes || 0), -vidaUtil));
+    const remolqueAmortizacion =
+        (remolque - residualRemolque) / vidaUtilRemolque +
+        (((remolque - residualRemolque) / -vidaUtilRemolque) *
+            (vehiculo?.interes || 0)) /
+            (1 - Math.pow(1 + (vehiculo?.interes || 0), -vidaUtilRemolque));
     return (
         <Form {...form}>
             <form
@@ -155,8 +164,8 @@ export default function CalculatorForm() {
                                     // vehiculo has not changed yet
                                     // console.log(vehiculo);
                                     form.reset(
-                                        costosVehiculos.find(
-                                            (cv) => cv.nombre === value
+                                        vehiculos.find(
+                                            (v) => v.nombre === value
                                         )
                                     );
                                 }}
@@ -168,12 +177,12 @@ export default function CalculatorForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {costosVehiculos.map((cv) => (
+                                    {vehiculos.map((v) => (
                                         <SelectItem
-                                            key={cv.nombre}
-                                            value={cv.nombre}
+                                            key={v.nombre}
+                                            value={v.nombre}
                                         >
-                                            {cv.nombre}
+                                            {v.nombre}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -423,10 +432,7 @@ export default function CalculatorForm() {
                                     Gasto total anual en neumáticos (US$)
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        readOnly
-                                        value={(vehiculo?.neumaticos || 0) * km}
-                                    />
+                                    <Input readOnly value={neumaticos} />
                                 </FormControl>
                             </FormItem>
                             <FormItem>
@@ -434,10 +440,7 @@ export default function CalculatorForm() {
                                     Gasto total anual en neumáticos (US$)
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        readOnly
-                                        value={km * (vehiculo?.neumaticos || 0)}
-                                    />
+                                    <Input readOnly value={mantenimiento} />
                                 </FormControl>
                             </FormItem>
                             <FormField
@@ -459,8 +462,207 @@ export default function CalculatorForm() {
                         </AccordionContent>
                     </AccordionItem>
                 </Accordion>
-
-                <Button type="submit">Submit</Button>
+                <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Servicio</AccordionTrigger>
+                        <AccordionContent>
+                            <FormItem>
+                                <FormLabel>
+                                    Kilómetros recorridos en este servicio (km)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={(kmCarga || 0) + (kmVacio || 0)}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="kmCarga"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros en carga (km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="kmVacio"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros en vacío (km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="consumo"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Consumo medio por kilómetro en este
+                                            servicio (litros / 100 km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel>
+                                    Horas empleadas en este servicio
+                                </FormLabel>
+                                <FormControl>
+                                    <Input readOnly value={horasServicio} />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="horasCarga"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Horas en carga</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="horasVacio"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Horas en vacío</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="horasParalizacion"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Horas en carga, descarga y
+                                            paralización
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="peajes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Peajes</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel>
+                                    Coste por distancia de este servicio (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            ((kmServicio * (consumo || 0)) /
+                                                100) *
+                                                (carburante || 0) +
+                                            (kmServicio *
+                                                (neumaticos + mantenimiento)) /
+                                                km +
+                                            (peajes || 0)
+                                        }
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem>
+                                <FormLabel>
+                                    Coste por tiempo de este servicio (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            (horasServicio *
+                                                ((vehiculoAmortizacion || 0) +
+                                                    (remolqueAmortizacion ||
+                                                        0)) +
+                                                conductor +
+                                                dietas +
+                                                seguros +
+                                                fiscal +
+                                                carburante +
+                                                indirectos) /
+                                            horas
+                                        }
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="otros"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Otros costes asociados a este
+                                            servicio (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dolar"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            {`Cotización Dólar ${new Date().toLocaleDateString()}`}
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+                <Button type="submit">Calcular costo del servicio</Button>
             </form>
         </Form>
     );

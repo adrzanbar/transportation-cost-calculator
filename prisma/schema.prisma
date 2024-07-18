@@ -27,39 +27,39 @@ model Vehiculo {
 }
 
 model Parametros {
-  id                  Int        @id @default(autoincrement())
+  id               Int        @id @default(autoincrement())
   //   Kilómetros recorridos anualmente
-  km                  Int
+  km               Int
   // Horas trabajadas al año
-  horas               Int
+  horas            Int
   // Valor de adquisición del vehículo sin IVA y sin neumáticos (u$s)
-  adquisicion         Float
+  adquisicion      Float
   // Vida útil del vehículo (años)
-  vidaUtil            Int
+  vidaUtil         Int
   // Valor residual sin IVA del vehículo (u$s)
-  residual            Float
+  residual         Float
   // Valor de adquisición del remolque-semirremolque sin IVA y sin neumáticos (u$s)
-  adquisicionRemolque Float
+  remolque         Float
   // Vida útil del remolque-semirremolque (años)
-  vidaUtilRemolque    Int
+  vidaUtilRemolque Int
   // Valor residual del remolque-semirremolque sin IVA (u$s)
-  residualRemolque    Float
+  residualRemolque Float
   // Coste total anual del conductor, incluidos costes de empresa, Seg. Soc y otros (u$s)
-  conductor           Float
+  conductor        Float
   // Dietas anuales del conductor (u$s)
-  dietas              Float
+  dietas           Float
   // Coste total anual de los seguros (u$s)
-  seguros             Float
+  seguros          Float
   // Coste fiscal total anual (u$s)
-  fiscal              Float
+  fiscal           Float
   // Precio carburante sin IVA (u$s/litro)
-  carburante          Float
+  carburante       Float
   // Consumo medio (litros/100km)
-  consumo             Float
+  consumo          Float
   // Total costes anuales indirectos repercutibles a este vehículo (u$s)  
-  indirectos          Float
-  Vehiculo            Vehiculo?
-  Servicio            Servicio[]
+  indirectos       Float
+  Vehiculo         Vehiculo?
+  Servicio         Servicio[]
 }
 
 model Servicio {
