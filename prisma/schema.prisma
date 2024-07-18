@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,47 +14,80 @@ datasource db {
 }
 
 model Vehiculo {
-  descripcion String @id
-
-  parametroId Int @unique
-
-  costoNeumaticosPorKm          Float
-  costoMantenimientoPorKmSinIva Float
-  tipoInteres                   Float
-  parametro                     Parametro @relation(fields: [parametroId], references: [id])
-  calculo                       Calculo[]
+  nombre        String     @id
+  // Tipo interes
+  interes       Float
+  // Costo neumáticos por km
+  neumaticos    Float
+  // Coste de mantenimiento por km, sin IVA (u$s/km)
+  mantenimiento Float
+  parametrosId  Int        @unique
+  parametros    Parametros @relation(fields: [parametrosId], references: [id])
+  Servicio      Servicio[]
 }
 
-model Parametro {
-  id Int @id @default(autoincrement())
-
-  kilometrosRecorridosAnualmente                           Float
-  horasTrabajadasAlAno                                     Float
-  valorAdquisicionVehiculoSinIvaSinNeumaticos              Float
-  vidaUtilVehiculo                                         Float
-  valorResidualVehiculoSinIva                              Float
-  valorAdquisicionRemolqueSemirremolqueSinIvaSinNeumaticos Float
-  vidaUtilRemolqueSemirremolque                            Float
-  valorResidualRemolqueSemirremolqueSinIva                 Float
-  costoAnualConductorEmpresaSegurosSociosOtros             Float
-  dietasAnualesConductor                                   Float
-  costoAnualSeguros                                        Float
-  costoFiscalAnual                                         Float
-  precioCarburanteSinIva                                   Float
-  consumoMedio                                             Float
-  costosAnualesIndirectos                                  Float
-
-  vehiculo Vehiculo?
-  calculo  Calculo?
+model Parametros {
+  id                  Int        @id @default(autoincrement())
+  //   Kilómetros recorridos anualmente
+  km                  Int
+  // Horas trabajadas al año
+  horas               Int
+  // Valor de adquisición del vehículo sin IVA y sin neumáticos (u$s)
+  adquisicion         Float
+  // Vida útil del vehículo (años)
+  vidaUtil            Int
+  // Valor residual sin IVA del vehículo (u$s)
+  residual            Float
+  // Valor de adquisición del remolque-semirremolque sin IVA y sin neumáticos (u$s)
+  adquisicionRemolque Float
+  // Vida útil del remolque-semirremolque (años)
+  vidaUtilRemolque    Int
+  // Valor residual del remolque-semirremolque sin IVA (u$s)
+  residualRemolque    Float
+  // Coste total anual del conductor, incluidos costes de empresa, Seg. Soc y otros (u$s)
+  conductor           Float
+  // Dietas anuales del conductor (u$s)
+  dietas              Float
+  // Coste total anual de los seguros (u$s)
+  seguros             Float
+  // Coste fiscal total anual (u$s)
+  fiscal              Float
+  // Precio carburante sin IVA (u$s/litro)
+  carburante          Float
+  // Consumo medio (litros/100km)
+  consumo             Float
+  // Total costes anuales indirectos repercutibles a este vehículo (u$s)  
+  indirectos          Float
+  Vehiculo            Vehiculo?
+  Servicio            Servicio[]
 }
 
-model Calculo {
-  id Int @id @default(autoincrement())
-
-  vehiculoDescripcion String @unique
-  parametroId         Int    @unique
-
-  createdAt DateTime  @default(now())
-  vehiculo  Vehiculo  @relation(fields: [vehiculoDescripcion], references: [descripcion])
-  parametro Parametro @relation(fields: [parametroId], references: [id])
+model Servicio {
+  id                Int         @id @default(autoincrement())
+  //Denominación del servicio
+  denominacion      String
+  //Kilómetros en carga (km) 
+  kmCarga           Float
+  // Kilómetros en vacío (km) 
+  kmVacio           Float
+  // Consumo medio por kilómetro en este servicio (litros / 100 km) 
+  consumo           Float
+  //Horas en carga 
+  horasCarga        Float
+  // Horas en vacío 
+  horasVacio        Float
+  // Horas en carga, descarga y paralización 
+  horasParalizacion Float
+  // Peajes 
+  peajes            Float
+  //Otros costes asociados a este servicio (u$s)
+  otros             Float
+  // Cotización Dólar
+  dolar             Float
+  // Fecha
+  fecha             DateTime
+  vehiculoNombre    String
+  vehiculo          Vehiculo    @relation(fields: [vehiculoNombre], references: [nombre])
+  parametrosId      Int?
+  parametros        Parametros? @relation(fields: [parametrosId], references: [id])
 }
