@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
     Form,
     FormControl,
@@ -29,40 +28,8 @@ import {
 } from "@/components/ui/accordion";
 import { Vehiculo } from "@prisma/client";
 import { calculateServiceCost } from "@/app/actions";
+import { formSchema, FormData } from "@/app/validation";
 
-const coerceNumberNonNegative = z.coerce.number({ coerce: true }).nonnegative();
-
-const formSchema = z.object({
-    nombre: z.string(),
-    kmCarga: coerceNumberNonNegative,
-    kmVacio: coerceNumberNonNegative,
-    consumo: coerceNumberNonNegative,
-    horasCarga: coerceNumberNonNegative,
-    horasVacio: coerceNumberNonNegative,
-    horasParalizacion: coerceNumberNonNegative,
-    peajes: coerceNumberNonNegative,
-    otros: coerceNumberNonNegative,
-    dolar: coerceNumberNonNegative,
-    parametros: z.object({
-        km: coerceNumberNonNegative,
-        horas: coerceNumberNonNegative,
-        adquisicion: coerceNumberNonNegative,
-        vidaUtil: coerceNumberNonNegative,
-        residual: coerceNumberNonNegative,
-        remolque: coerceNumberNonNegative,
-        vidaUtilRemolque: coerceNumberNonNegative,
-        residualRemolque: coerceNumberNonNegative,
-        conductor: coerceNumberNonNegative,
-        dietas: coerceNumberNonNegative,
-        seguros: coerceNumberNonNegative,
-        fiscal: coerceNumberNonNegative,
-        carburante: coerceNumberNonNegative,
-        consumo: coerceNumberNonNegative,
-        indirectos: coerceNumberNonNegative,
-    }),
-});
-
-export type FormData = z.infer<typeof formSchema>;
 export default function CalculatorForm({
     vehiculos,
     dolar,
@@ -73,6 +40,7 @@ export default function CalculatorForm({
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            vehiculoNombre: vehiculos[0].nombre,
             ...vehiculos[0],
             dolar,
             kmCarga: 0,
@@ -86,7 +54,7 @@ export default function CalculatorForm({
         },
     });
     const [nombre, ...formData] = form.watch([
-        "nombre",
+        "vehiculoNombre",
         "parametros.horas",
         "parametros.km",
         "parametros.adquisicion",
@@ -157,7 +125,7 @@ export default function CalculatorForm({
             >
                 <FormField
                     control={form.control}
-                    name="nombre"
+                    name="vehiculoNombre"
                     render={({ field }) => (
                         <FormItem className="flex-grow">
                             <Label>Vehiculo</Label>
@@ -166,11 +134,14 @@ export default function CalculatorForm({
                                     field.onChange(value);
                                     // vehiculo has not changed yet
                                     // console.log(vehiculo);
-                                    form.reset(
-                                        vehiculos.find(
-                                            (v) => v.nombre === value
-                                        )
+                                    const vehiculo = vehiculos.find(
+                                        (v) => v.nombre === value
                                     );
+                                    if (vehiculo)
+                                        form.reset({
+                                            vehiculoNombre: vehiculo.nombre,
+                                            ...vehiculo,
+                                        });
                                 }}
                                 defaultValue={field.value}
                             >

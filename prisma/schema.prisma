@@ -65,7 +65,7 @@ model Parametros {
 model Servicio {
   id                Int         @id @default(autoincrement())
   //Denominación del servicio
-  denominacion      String
+  denominacion      String?
   //Kilómetros en carga (km) 
   kmCarga           Float
   // Kilómetros en vacío (km) 
