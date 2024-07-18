@@ -122,7 +122,12 @@ export default function CalculatorForm() {
         resolver: zodResolver(formSchema),
         defaultValues: costosVehiculos[0],
     });
-    const nombre = form.watch("nombre");
+    const [nombre, km, consumo, carburante] = form.watch([
+        "nombre",
+        "parametros.km",
+        "parametros.consumo",
+        "parametros.carburante",
+    ]);
     const vehiculo = costosVehiculos.find((cv) => cv.nombre === nombre);
     return (
         <Form {...form}>
@@ -141,6 +146,8 @@ export default function CalculatorForm() {
                             <Select
                                 onValueChange={(value) => {
                                     field.onChange(value);
+                                    // vehiculo has not changed yet
+                                    // console.log(vehiculo);
                                     form.reset(
                                         costosVehiculos.find(
                                             (cv) => cv.nombre === value
@@ -382,13 +389,15 @@ export default function CalculatorForm() {
                         Gasto total anual en carburante, sin IVA (US$)
                     </FormLabel>
                     <FormControl>
+                        <Input readOnly value={km * consumo * carburante} />
+                    </FormControl>
+                </FormItem>
+                <FormItem>
+                    <FormLabel>Gasto total anual en neumáticos (US$)</FormLabel>
+                    <FormControl>
                         <Input
                             readOnly
-                            value={
-                                form.getValues("parametros.km") *
-                                form.getValues("parametros.consumo") *
-                                form.getValues("parametros.carburante")
-                            }
+                            value={(vehiculo?.neumaticos || 0) * km}
                         />
                     </FormControl>
                 </FormItem>
@@ -397,22 +406,7 @@ export default function CalculatorForm() {
                     <FormControl>
                         <Input
                             readOnly
-                            value={
-                                vehiculo?.neumaticos ||
-                                0 * form.getValues("parametros.km")
-                            }
-                        />
-                    </FormControl>
-                </FormItem>
-                <FormItem>
-                    <FormLabel>Gasto total anual en neumáticos (US$)</FormLabel>
-                    <FormControl>
-                        <Input
-                            readOnly
-                            value={
-                                form.getValues("parametros.km") *
-                                (vehiculo?.neumaticos || 0)
-                            }
+                            value={km * (vehiculo?.neumaticos || 0)}
                         />
                     </FormControl>
                 </FormItem>
