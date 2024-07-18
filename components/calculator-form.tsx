@@ -21,6 +21,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "./ui/label";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const costosVehiculos = [
     {
@@ -176,256 +182,284 @@ export default function CalculatorForm() {
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="parametros.km"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Kilómetros recorridos anualmente
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.horas"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Horas trabajadas al año</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.adquisicion"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Valor de adquisición del vehículo sin IVA y sin
-                                neumáticos (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.vidaUtil"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Vida útil del vehículo (años)</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.residual"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Valor residual sin IVA del vehículo (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.remolque"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Valor de adquisición del remolque-semirremolque
-                                sin IVA y sin neumáticos (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.vidaUtilRemolque"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Vida útil del remolque-semirremolque (años)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.residualRemolque"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Valor residual del remolque-semirremolque sin
-                                IVA (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.conductor"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Coste total anual del conductor, incluidos
-                                costes de empresa, Seg. Soc y otros (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.dietas"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Dietas anuales del conductor (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.seguros"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Coste total anual de los seguros (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.fiscal"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Coste fiscal total anual (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.carburante"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Precio carburante sin IVA (US$/litro)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="parametros.consumo"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Consumo medio (litros/100km)</FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormItem>
-                    <FormLabel>
-                        Gasto total anual en carburante, sin IVA (US$)
-                    </FormLabel>
-                    <FormControl>
-                        <Input readOnly value={km * consumo * carburante} />
-                    </FormControl>
-                </FormItem>
-                <FormItem>
-                    <FormLabel>Gasto total anual en neumáticos (US$)</FormLabel>
-                    <FormControl>
-                        <Input
-                            readOnly
-                            value={(vehiculo?.neumaticos || 0) * km}
-                        />
-                    </FormControl>
-                </FormItem>
-                <FormItem>
-                    <FormLabel>Gasto total anual en neumáticos (US$)</FormLabel>
-                    <FormControl>
-                        <Input
-                            readOnly
-                            value={km * (vehiculo?.neumaticos || 0)}
-                        />
-                    </FormControl>
-                </FormItem>
-                <FormField
-                    control={form.control}
-                    name="parametros.indirectos"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>
-                                Total costes anuales indirectos repercutibles a
-                                este vehículo (US$)
-                            </FormLabel>
-                            <FormControl>
-                                <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <Accordion type="single" collapsible>
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Parámetros</AccordionTrigger>
+                        <AccordionContent>
+                            <FormField
+                                control={form.control}
+                                name="parametros.km"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros recorridos anualmente
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.horas"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Horas trabajadas al año
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.adquisicion"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor de adquisición del vehículo
+                                            sin IVA y sin neumáticos (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.vidaUtil"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Vida útil del vehículo (años)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.residual"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor residual sin IVA del vehículo
+                                            (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.remolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor de adquisición del
+                                            remolque-semirremolque sin IVA y sin
+                                            neumáticos (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.vidaUtilRemolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Vida útil del remolque-semirremolque
+                                            (años)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.residualRemolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor residual del
+                                            remolque-semirremolque sin IVA (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.conductor"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste total anual del conductor,
+                                            incluidos costes de empresa, Seg.
+                                            Soc y otros (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.dietas"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Dietas anuales del conductor (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.seguros"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste total anual de los seguros
+                                            (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.fiscal"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste fiscal total anual (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.carburante"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Precio carburante sin IVA
+                                            (US$/litro)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.consumo"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Consumo medio (litros/100km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel>
+                                    Gasto total anual en carburante, sin IVA
+                                    (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={km * consumo * carburante}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem>
+                                <FormLabel>
+                                    Gasto total anual en neumáticos (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={(vehiculo?.neumaticos || 0) * km}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem>
+                                <FormLabel>
+                                    Gasto total anual en neumáticos (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={km * (vehiculo?.neumaticos || 0)}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="parametros.indirectos"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Total costes anuales indirectos
+                                            repercutibles a este vehículo (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+
                 <Button type="submit">Submit</Button>
             </form>
         </Form>
