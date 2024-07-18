@@ -28,7 +28,7 @@ model Vehiculo {
 
 model Parametros {
   id               Int        @id @default(autoincrement())
-  //   Kilómetros recorridos anualmente
+  // Kilómetros recorridos anualmente
   km               Int
   // Horas trabajadas al año
   horas            Int
@@ -64,15 +64,15 @@ model Parametros {
 
 model Servicio {
   id                Int         @id @default(autoincrement())
-  //Denominación del servicio
+  // Denominación del servicio
   denominacion      String?
-  //Kilómetros en carga (km) 
+  // Kilómetros en carga (km) 
   kmCarga           Float
   // Kilómetros en vacío (km) 
   kmVacio           Float
   // Consumo medio por kilómetro en este servicio (litros / 100 km) 
   consumo           Float
-  //Horas en carga 
+  // Horas en carga 
   horasCarga        Float
   // Horas en vacío 
   horasVacio        Float

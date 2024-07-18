@@ -3,16 +3,9 @@ import { z } from "zod";
 const coerceNumberNonNegative = z.coerce.number({ coerce: true }).nonnegative();
 
 export const formSchema = z.object({
-    vehiculoNombre: z.string(),
-    kmCarga: coerceNumberNonNegative,
-    kmVacio: coerceNumberNonNegative,
-    consumo: coerceNumberNonNegative,
-    horasCarga: coerceNumberNonNegative,
-    horasVacio: coerceNumberNonNegative,
-    horasParalizacion: coerceNumberNonNegative,
-    peajes: coerceNumberNonNegative,
-    otros: coerceNumberNonNegative,
-    dolar: coerceNumberNonNegative,
+    vehiculo: z.object({
+        nombre: z.string(),
+    }),
     parametros: z.object({
         km: coerceNumberNonNegative,
         horas: coerceNumberNonNegative,
@@ -30,6 +23,15 @@ export const formSchema = z.object({
         consumo: coerceNumberNonNegative,
         indirectos: coerceNumberNonNegative,
     }),
+    kmCarga: coerceNumberNonNegative,
+    kmVacio: coerceNumberNonNegative,
+    consumo: coerceNumberNonNegative,
+    horasCarga: coerceNumberNonNegative,
+    horasVacio: coerceNumberNonNegative,
+    horasParalizacion: coerceNumberNonNegative,
+    peajes: coerceNumberNonNegative,
+    otros: coerceNumberNonNegative,
+    dolar: coerceNumberNonNegative,
 });
 
 export type FormData = z.infer<typeof formSchema>;

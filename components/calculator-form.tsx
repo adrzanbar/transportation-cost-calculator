@@ -26,22 +26,28 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Vehiculo } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { calculateServiceCost } from "@/app/actions";
 import { formSchema, FormData } from "@/app/validation";
+
+type VehiculoWithParametros = Prisma.VehiculoGetPayload<{
+    include: { parametros: true };
+}>;
 
 export default function CalculatorForm({
     vehiculos,
     dolar,
 }: {
-    vehiculos: Vehiculo[];
+    vehiculos: VehiculoWithParametros[];
     dolar: number;
 }) {
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            vehiculoNombre: vehiculos[0].nombre,
-            ...vehiculos[0],
+            vehiculo: {
+                nombre: vehiculos[0].nombre,
+            },
+            parametros: vehiculos[0].parametros,
             dolar,
             kmCarga: 0,
             kmVacio: 0,
@@ -54,7 +60,7 @@ export default function CalculatorForm({
         },
     });
     const [nombre, ...formData] = form.watch([
-        "vehiculoNombre",
+        "vehiculo.nombre",
         "parametros.horas",
         "parametros.km",
         "parametros.adquisicion",
@@ -125,7 +131,7 @@ export default function CalculatorForm({
             >
                 <FormField
                     control={form.control}
-                    name="vehiculoNombre"
+                    name="vehiculo.nombre"
                     render={({ field }) => (
                         <FormItem className="flex-grow">
                             <Label>Vehiculo</Label>
@@ -137,11 +143,7 @@ export default function CalculatorForm({
                                     const vehiculo = vehiculos.find(
                                         (v) => v.nombre === value
                                     );
-                                    if (vehiculo)
-                                        form.reset({
-                                            vehiculoNombre: vehiculo.nombre,
-                                            ...vehiculo,
-                                        });
+                                    if (vehiculo) form.reset({});
                                 }}
                                 defaultValue={field.value}
                             >
