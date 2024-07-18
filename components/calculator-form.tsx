@@ -28,6 +28,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Vehiculo } from "@prisma/client";
+import { calculateServiceCost } from "@/app/actions";
 
 const coerceNumberNonNegative = z.coerce.number({ coerce: true }).nonnegative();
 
@@ -60,6 +61,8 @@ const formSchema = z.object({
         indirectos: coerceNumberNonNegative,
     }),
 });
+
+export type FormData = z.infer<typeof formSchema>;
 export default function CalculatorForm({
     vehiculos,
     dolar,
@@ -67,7 +70,7 @@ export default function CalculatorForm({
     vehiculos: Vehiculo[];
     dolar: number;
 }) {
-    const form = useForm<z.infer<typeof formSchema>>({
+    const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             ...vehiculos[0],
@@ -148,8 +151,8 @@ export default function CalculatorForm({
         <Form {...form}>
             <form
                 className="p-2 space-y-1"
-                onSubmit={form.handleSubmit((values) => {
-                    console.log("Form Values:", values);
+                onSubmit={form.handleSubmit(async (values) => {
+                    await calculateServiceCost(values);
                 })}
             >
                 <FormField
