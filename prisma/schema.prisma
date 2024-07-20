@@ -63,7 +63,7 @@ model Parametros {
 }
 
 model Servicio {
-  id                Int         @id @default(autoincrement())
+  id                Int        @id @default(autoincrement())
   // Denominación del servicio
   denominacion      String?
   // Kilómetros en carga (km) 
@@ -87,7 +87,7 @@ model Servicio {
   // Fecha
   fecha             DateTime
   vehiculoNombre    String
-  vehiculo          Vehiculo    @relation(fields: [vehiculoNombre], references: [nombre])
-  parametrosId      Int?
-  parametros        Parametros? @relation(fields: [parametrosId], references: [id])
+  vehiculo          Vehiculo   @relation(fields: [vehiculoNombre], references: [nombre])
+  parametrosId      Int
+  parametros        Parametros @relation(fields: [parametrosId], references: [id])
 }
