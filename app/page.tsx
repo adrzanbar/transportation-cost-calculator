@@ -1,5 +1,5 @@
 import CalculatorForm from "@/components/calculator-form";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma/prisma";
 
 export default async function Home() {
     const vehiculos = await prisma.vehiculo.findMany({

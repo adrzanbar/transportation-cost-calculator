@@ -1,5 +1,5 @@
 import CostPieChart from "@/components/pie-chart";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma/prisma";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const servicio = await prisma.servicio.findUnique({

@@ -1,7 +1,7 @@
 "use server";
 
 import { formSchema, FormData } from "@/app/validation";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma/prisma";
 import { redirect } from "next/navigation";
 
 export async function calculateServiceCost(formData: FormData) {
