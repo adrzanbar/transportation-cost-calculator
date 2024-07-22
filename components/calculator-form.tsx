@@ -102,7 +102,7 @@ export default function CalculatorForm({
     return (
         <Form {...form}>
             <form
-                className="p-2 m-2 space-y-2"
+                className="flex flex-col gap-2 p-2 m-2"
                 onSubmit={form.handleSubmit(async (values) => {
                     await calculateServiceCost(values);
                 })}
@@ -139,8 +139,8 @@ export default function CalculatorForm({
                 <Accordion type="single" collapsible defaultValue="servicio">
                     <AccordionItem value="parametros">
                         <AccordionTrigger>Parámetros</AccordionTrigger>
-                        <AccordionContent className="flex flex-wrap gap-2 m-2 p-2 justify-center">
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                        <AccordionContent className="flex flex-wrap gap-2 justify-center">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.horas"
@@ -150,7 +150,10 @@ export default function CalculatorForm({
                                                 Horas trabajadas al año
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -166,7 +169,10 @@ export default function CalculatorForm({
                                                 Seg. Soc y otros (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -181,14 +187,17 @@ export default function CalculatorForm({
                                                 (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.adquisicion"
@@ -200,7 +209,10 @@ export default function CalculatorForm({
                                                 neumáticos (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -214,7 +226,10 @@ export default function CalculatorForm({
                                                 Vida útil del vehículo (años)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -229,14 +244,17 @@ export default function CalculatorForm({
                                                 vehículo (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.remolque"
@@ -248,7 +266,10 @@ export default function CalculatorForm({
                                                 sin neumáticos (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -263,7 +284,10 @@ export default function CalculatorForm({
                                                 remolque-semirremolque (años)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -279,14 +303,17 @@ export default function CalculatorForm({
                                                 (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.seguros"
@@ -297,7 +324,10 @@ export default function CalculatorForm({
                                                 (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -311,7 +341,10 @@ export default function CalculatorForm({
                                                 Coste fiscal total anual (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -327,14 +360,17 @@ export default function CalculatorForm({
                                                 (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.carburante"
@@ -345,7 +381,10 @@ export default function CalculatorForm({
                                                 (US$/litro)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -359,7 +398,10 @@ export default function CalculatorForm({
                                                 Consumo medio (litros/100km)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -371,6 +413,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(
@@ -383,13 +426,12 @@ export default function CalculatorForm({
                                                           )
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="parametros.km"
@@ -399,7 +441,10 @@ export default function CalculatorForm({
                                                 Kilómetros recorridos anualmente
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -410,6 +455,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(
@@ -422,7 +468,6 @@ export default function CalculatorForm({
                                                           )
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -433,6 +478,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(
@@ -445,7 +491,6 @@ export default function CalculatorForm({
                                                           )
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -455,8 +500,8 @@ export default function CalculatorForm({
 
                     <AccordionItem value="servicio">
                         <AccordionTrigger>Servicio</AccordionTrigger>
-                        <AccordionContent className="flex flex-wrap gap-2 m-2 p-2 justify-center">
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                        <AccordionContent className="flex flex-wrap gap-2 justify-center">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormItem>
                                     <FormLabel className="font-bold">
                                         Kilómetros recorridos en este servicio
@@ -464,6 +509,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(kmServicio)
@@ -472,7 +518,6 @@ export default function CalculatorForm({
                                                           kmServicio.toFixed(2)
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -485,7 +530,10 @@ export default function CalculatorForm({
                                                 Kilómetros en carga (km)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -499,20 +547,24 @@ export default function CalculatorForm({
                                                 Kilómetros en vacío (km)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormItem>
                                     <FormLabel className="font-bold">
                                         Horas empleadas en este servicio
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(horasServicio)
@@ -523,7 +575,6 @@ export default function CalculatorForm({
                                                           )
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -536,7 +587,10 @@ export default function CalculatorForm({
                                                 Horas en carga
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -550,7 +604,10 @@ export default function CalculatorForm({
                                                 Horas en vacío
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -565,14 +622,17 @@ export default function CalculatorForm({
                                                 paralización
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormField
                                     control={form.control}
                                     name="consumo"
@@ -583,7 +643,10 @@ export default function CalculatorForm({
                                                 este servicio (litros / 100 km)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -595,7 +658,10 @@ export default function CalculatorForm({
                                         <FormItem>
                                             <FormLabel>Peajes</FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -610,7 +676,10 @@ export default function CalculatorForm({
                                                 servicio (US$)
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
@@ -624,14 +693,17 @@ export default function CalculatorForm({
                                                 {`Cotización Dólar ${new Date().toLocaleDateString()}`}
                                             </FormLabel>
                                             <FormControl>
-                                                <Input {...field} />
+                                                <Input
+                                                    className="text-right"
+                                                    {...field}
+                                                />
                                             </FormControl>
                                         </FormItem>
                                     )}
                                 />
                             </div>
 
-                            <div className="flex flex-col gap-2 m-2 p-2 border rounded">
+                            <div className="flex flex-col gap-2 p-2 border rounded">
                                 <FormItem>
                                     <FormLabel className="font-bold">
                                         Coste por distancia de este servicio
@@ -639,6 +711,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(
@@ -654,7 +727,6 @@ export default function CalculatorForm({
                                                               : 0
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -664,6 +736,7 @@ export default function CalculatorForm({
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            className="text-right font-bold"
                                             readOnly
                                             value={
                                                 Number.isInteger(costePorTiempo)
@@ -674,7 +747,6 @@ export default function CalculatorForm({
                                                           )
                                                       )
                                             }
-                                            className="font-bold"
                                         />
                                     </FormControl>
                                 </FormItem>
