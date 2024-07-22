@@ -107,21 +107,20 @@ export default function CalculatorForm({
         formData.parametros.horas;
 
     return (
-        <section className="p-2">
-            <Form {...form}>
-                <form
-                    className="p-2 space-y-1"
-                    onSubmit={form.handleSubmit(async (values) => {
-                        await calculateServiceCost(values);
-                    })}
-                >
+        <Form {...form}>
+            <form
+                className="p-2 space-y-1"
+                onSubmit={form.handleSubmit(async (values) => {
+                    await calculateServiceCost(values);
+                })}
+            >
+                <div className="flex items-end gap-2">
                     <FormField
                         control={form.control}
                         name="vehiculo.nombre"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className="flex-grow">
                                 <FormLabel>Vehiculo</FormLabel>
-
                                 <Select
                                     onValueChange={field.onChange}
                                     defaultValue={field.value}
@@ -146,552 +145,529 @@ export default function CalculatorForm({
                             </FormItem>
                         )}
                     />
-                    <Accordion
-                        type="single"
-                        collapsible
-                        defaultValue="servicio"
-                    >
-                        <AccordionItem value="parametros">
-                            <AccordionTrigger>Parámetros</AccordionTrigger>
-                            <AccordionContent className="grid grid-cols-2 gap-2 p-2">
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.km"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Kilómetros recorridos anualmente
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.horas"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Horas trabajadas al año
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.adquisicion"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Valor de adquisición del
-                                                vehículo sin IVA y sin
-                                                neumáticos (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.vidaUtil"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Vida útil del vehículo (años)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.residual"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Valor residual sin IVA del
-                                                vehículo (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.remolque"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Valor de adquisición del
-                                                remolque-semirremolque sin IVA y
-                                                sin neumáticos (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.vidaUtilRemolque"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Vida útil del
-                                                remolque-semirremolque (años)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.residualRemolque"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Valor residual del
-                                                remolque-semirremolque sin IVA
-                                                (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.conductor"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Coste total anual del conductor,
-                                                incluidos costes de empresa,
-                                                Seg. Soc y otros (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.dietas"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Dietas anuales del conductor
-                                                (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.seguros"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Coste total anual de los seguros
-                                                (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.fiscal"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Coste fiscal total anual (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.carburante"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Precio carburante sin IVA
-                                                (US$/litro)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.consumo"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Consumo medio (litros/100km)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Gasto total anual en carburante, sin IVA
-                                        (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualCarburante
-                                                )
-                                                    ? gastoAnualCarburante
-                                                    : Number(
-                                                          gastoAnualCarburante.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Gasto total anual en neumáticos (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualNeumaticos
-                                                )
-                                                    ? gastoAnualNeumaticos
-                                                    : Number(
-                                                          gastoAnualNeumaticos.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormItem className="font-bold">
-                                    <FormLabel>
-                                        Gasto anual en mantenimiento sin IVA
-                                        (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualMantenimiento
-                                                )
-                                                    ? gastoAnualMantenimiento
-                                                    : Number(
-                                                          gastoAnualMantenimiento.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormField
-                                    control={form.control}
-                                    name="parametros.indirectos"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Total costes anuales indirectos
-                                                repercutibles a este vehículo
-                                                (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="servicio">
-                            <AccordionTrigger>Servicio</AccordionTrigger>
-                            <AccordionContent className="grid grid-cols-2 gap-2 p-2">
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Kilómetros recorridos en este servicio
-                                        (km)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(kmServicio)
-                                                    ? kmServicio
-                                                    : Number(
-                                                          kmServicio.toFixed(2)
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormField
-                                    control={form.control}
-                                    name="kmCarga"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Kilómetros en carga (km)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="kmVacio"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Kilómetros en vacío (km)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="consumo"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Consumo medio por kilómetro en
-                                                este servicio (litros / 100 km)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Horas empleadas en este servicio
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(horasServicio)
-                                                    ? horasServicio
-                                                    : Number(
-                                                          horasServicio.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormField
-                                    control={form.control}
-                                    name="horasCarga"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Horas en carga
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="horasVacio"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Horas en vacío
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="horasParalizacion"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Horas en carga, descarga y
-                                                paralización
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="peajes"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Peajes</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Coste por distancia de este servicio
-                                        (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    costePorDistancia
-                                                )
-                                                    ? costePorDistancia
-                                                    : Number(
-                                                          costePorDistancia.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Coste por tiempo de este servicio (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            readOnly
-                                            value={
-                                                Number.isInteger(costePorTiempo)
-                                                    ? costePorTiempo
-                                                    : Number(
-                                                          costePorTiempo.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                            className="font-bold"
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormField
-                                    control={form.control}
-                                    name="otros"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Otros costes asociados a este
-                                                servicio (US$)
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="dolar"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                {`Cotización Dólar ${new Date().toLocaleDateString()}`}
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
                     <Button type="submit">Calcular costo del servicio</Button>
-                </form>
-            </Form>
-        </section>
+                </div>
+                <Accordion type="single" collapsible defaultValue="servicio">
+                    <AccordionItem value="parametros">
+                        <AccordionTrigger>Parámetros</AccordionTrigger>
+                        <AccordionContent className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-1 gap-2 items-end p-2">
+                            <FormField
+                                control={form.control}
+                                name="parametros.km"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros recorridos anualmente
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.horas"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Horas trabajadas al año
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.adquisicion"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor de adquisición del vehículo
+                                            sin IVA y sin neumáticos (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.vidaUtil"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Vida útil del vehículo (años)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.residual"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor residual sin IVA del vehículo
+                                            (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.remolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor de adquisición del
+                                            remolque-semirremolque sin IVA y sin
+                                            neumáticos (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.vidaUtilRemolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Vida útil del remolque-semirremolque
+                                            (años)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.residualRemolque"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Valor residual del
+                                            remolque-semirremolque sin IVA (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.conductor"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste total anual del conductor,
+                                            incluidos costes de empresa, Seg.
+                                            Soc y otros (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.dietas"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Dietas anuales del conductor (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.seguros"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste total anual de los seguros
+                                            (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.fiscal"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Coste fiscal total anual (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.carburante"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Precio carburante sin IVA
+                                            (US$/litro)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="parametros.consumo"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Consumo medio (litros/100km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Gasto total anual en carburante, sin IVA
+                                    (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(
+                                                gastoAnualCarburante
+                                            )
+                                                ? gastoAnualCarburante
+                                                : Number(
+                                                      gastoAnualCarburante.toFixed(
+                                                          2
+                                                      )
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Gasto total anual en neumáticos (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(
+                                                gastoAnualNeumaticos
+                                            )
+                                                ? gastoAnualNeumaticos
+                                                : Number(
+                                                      gastoAnualNeumaticos.toFixed(
+                                                          2
+                                                      )
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem className="font-bold">
+                                <FormLabel>
+                                    Gasto anual en mantenimiento sin IVA (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(
+                                                gastoAnualMantenimiento
+                                            )
+                                                ? gastoAnualMantenimiento
+                                                : Number(
+                                                      gastoAnualMantenimiento.toFixed(
+                                                          2
+                                                      )
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="parametros.indirectos"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Total costes anuales indirectos
+                                            repercutibles a este vehículo (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="servicio">
+                        <AccordionTrigger>Servicio</AccordionTrigger>
+                        <AccordionContent className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 grid-cols-1 gap-2 items-end p-2">
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Kilómetros recorridos en este servicio (km)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(kmServicio)
+                                                ? kmServicio
+                                                : Number(kmServicio.toFixed(2))
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="kmCarga"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros en carga (km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="kmVacio"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Kilómetros en vacío (km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="consumo"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Consumo medio por kilómetro en este
+                                            servicio (litros / 100 km)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Horas empleadas en este servicio
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(horasServicio)
+                                                ? horasServicio
+                                                : Number(
+                                                      horasServicio.toFixed(2)
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="horasCarga"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Horas en carga</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="horasVacio"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Horas en vacío</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="horasParalizacion"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Horas en carga, descarga y
+                                            paralización
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="peajes"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Peajes</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Coste por distancia de este servicio (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(costePorDistancia)
+                                                ? costePorDistancia
+                                                : Number(
+                                                      costePorDistancia.toFixed(
+                                                          2
+                                                      )
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormItem>
+                                <FormLabel className="font-bold">
+                                    Coste por tiempo de este servicio (US$)
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        readOnly
+                                        value={
+                                            Number.isInteger(costePorTiempo)
+                                                ? costePorTiempo
+                                                : Number(
+                                                      costePorTiempo.toFixed(2)
+                                                  )
+                                        }
+                                        className="font-bold"
+                                    />
+                                </FormControl>
+                            </FormItem>
+                            <FormField
+                                control={form.control}
+                                name="otros"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Otros costes asociados a este
+                                            servicio (US$)
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dolar"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            {`Cotización Dólar ${new Date().toLocaleDateString()}`}
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+            </form>
+        </Form>
     );
 }
