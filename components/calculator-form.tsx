@@ -21,7 +21,7 @@ import {
 import { Prisma } from "@prisma/client";
 import { calculateServiceCost } from "@/app/actions";
 import { formSchema, FormData } from "@/app/validation";
-import { amortizacionYGastosFinancieros } from "@/lib/calculations";
+import { amortizacion } from "@/lib/calculations";
 import { useEffect } from "react";
 
 type VehiculoWithParametros = Prisma.VehiculoGetPayload<{
@@ -86,7 +86,7 @@ export default function CalculatorForm({
     const costePorTiempo =
         (horasServicio *
             (vehiculo
-                ? amortizacionYGastosFinancieros({
+                ? amortizacion({
                       ...formData,
                       vehiculo,
                   })
@@ -701,55 +701,6 @@ export default function CalculatorForm({
                                         </FormItem>
                                     )}
                                 />
-                            </div>
-
-                            <div className="flex flex-col gap-2 p-2 border rounded">
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Coste por distancia de este servicio
-                                        (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="text-right font-bold"
-                                            readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    costePorDistancia
-                                                )
-                                                    ? costePorDistancia
-                                                    : Number(
-                                                          typeof costePorDistancia ===
-                                                              "number"
-                                                              ? costePorDistancia.toFixed(
-                                                                    2
-                                                                )
-                                                              : 0
-                                                      )
-                                            }
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                                <FormItem>
-                                    <FormLabel className="font-bold">
-                                        Coste por tiempo de este servicio (US$)
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="text-right font-bold"
-                                            readOnly
-                                            value={
-                                                Number.isInteger(costePorTiempo)
-                                                    ? costePorTiempo
-                                                    : Number(
-                                                          costePorTiempo.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
-                                        />
-                                    </FormControl>
-                                </FormItem>
                             </div>
                         </AccordionContent>
                     </AccordionItem>

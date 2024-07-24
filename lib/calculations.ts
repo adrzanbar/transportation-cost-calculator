@@ -4,7 +4,7 @@ type Servicio = Prisma.ServicioGetPayload<{
     include: { vehiculo: true; parametros: true };
 }>;
 
-export const amortizacionYGastosFinancieros = ({
+export const amortizacion = ({
     vehiculo: { interes },
     parametros: {
         adquisicion,
