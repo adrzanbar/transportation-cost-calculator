@@ -21,15 +21,21 @@ export type ComponentProps = {
     }[];
     chartConfig: ChartConfig;
     title: string;
+    unit: string;
 };
 
-export function Component({ chartData, chartConfig, title }: ComponentProps) {
+export function Component({
+    chartData,
+    chartConfig,
+    title,
+    unit,
+}: ComponentProps) {
     const total = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.data, 0);
     }, [chartData]);
 
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col gap-2 m-2 p-2">
             <CardHeader className="items-center pb-0">
                 <CardTitle>{title}</CardTitle>
             </CardHeader>
@@ -41,7 +47,7 @@ export function Component({ chartData, chartConfig, title }: ComponentProps) {
                     <PieChart>
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
+                            content={<ChartTooltipContent />}
                         />
                         <Pie
                             data={chartData}
@@ -69,14 +75,16 @@ export function Component({ chartData, chartConfig, title }: ComponentProps) {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {total.toLocaleString()}
+                                                    {total.toLocaleString(
+                                                        "es-AR"
+                                                    )}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Visitors
+                                                    {unit}
                                                 </tspan>
                                             </text>
                                         );
@@ -101,7 +109,6 @@ export function Component({ chartData, chartConfig, title }: ComponentProps) {
                         </Pie>
                         <ChartLegend
                             content={<ChartLegendContent nameKey="name" />}
-                            className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
                         />
                     </PieChart>
                 </ChartContainer>

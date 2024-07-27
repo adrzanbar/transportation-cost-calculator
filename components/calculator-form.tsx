@@ -404,8 +404,9 @@ export default function CalculatorForm({
                                             className="text-right font-bold"
                                             readOnly
                                             value={(
-                                                formData.parametros.carburante *
-                                                formData.parametros.km
+                                                (formData.parametros.km / 100) *
+                                                formData.parametros.consumo *
+                                                formData.parametros.carburante
                                             )
                                                 .toLocaleString("es-AR")
                                                 .replace("NaN", "")}

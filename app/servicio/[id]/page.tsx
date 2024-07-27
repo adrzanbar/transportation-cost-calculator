@@ -1,5 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { amortizacion, costePorDistancia } from "@/lib/calculations";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import {
+    amortizacion,
+    costePorDistancia,
+    costePorTiempo,
+} from "@/lib/calculations";
 import prisma from "@/prisma/prisma";
 import { notFound } from "next/navigation";
 import { Component as PieChart } from "@/components/pie-chart";
@@ -45,8 +55,8 @@ export default async function Page({ params }: { params: { id: string } }) {
         include: { vehiculo: true, parametros: true },
     });
     if (!servicio) notFound();
+    const cpt = costePorTiempo(servicio);
     const cpd = costePorDistancia(servicio);
-    const cpt = costePorDistancia(servicio);
     const total = cpd + cpt + amortizacion(servicio);
     const estructuraCostesAnualesData = [
         {
@@ -100,12 +110,41 @@ export default async function Page({ params }: { params: { id: string } }) {
             color: "hsl(var(--chart-4))",
         },
     } satisfies ChartConfig;
+    const tiempoVsDistanciaData = [
+        { name: "tiempo", data: cpd, fill: "var(--color-tiempo)" },
+        {
+            name: "distancia",
+            data:
+                (servicio.parametros.km / 100) *
+                    servicio.parametros.consumo *
+                    servicio.parametros.carburante +
+                servicio.vehiculo.neumaticos * servicio.parametros.km +
+                servicio.vehiculo.mantenimiento * servicio.parametros.km,
+            fill: "var(--color-distancia)",
+        },
+    ];
+    const tiempoVsDistanciaConfig = {
+        data: {
+            label: "Costes",
+        },
+        tiempo: {
+            label: "Coste por tiempo",
+            color: "hsl(var(--chart-1))",
+        },
+        distancia: {
+            label: "Coste por distancia",
+            color: "hsl(var(--chart-2))",
+        },
+    } satisfies ChartConfig;
     return (
-        <main className="flex justify-center flex-wrap m-2 p-2 gap-2">
+        <main className="m-2 p-2 flex flex-col gap-2">
             <div className="grid grid-cols-3 gap-2">
-                <Card>
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
-                        <CardTitle>Coste por distancia</CardTitle>
+                        <CardTitle>
+                            Coste por distancia de este servicio
+                        </CardTitle>
+                        <CardDescription>por km</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex justify-between">
@@ -122,9 +161,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
-                        <CardTitle>Coste por tiempo</CardTitle>
+                        <CardTitle>Coste por tiempo de este servicio</CardTitle>
+                        <CardDescription>por hora</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex justify-between">
@@ -141,9 +181,10 @@ export default async function Page({ params }: { params: { id: string } }) {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="flex flex-col justify-between">
                     <CardHeader>
-                        <CardTitle>Coste total de este Servicio</CardTitle>
+                        <CardTitle>Coste total</CardTitle>
+                        <CardDescription>de este Servicio</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="flex justify-between">
@@ -168,11 +209,13 @@ export default async function Page({ params }: { params: { id: string } }) {
                     chartData={estructuraCostesAnualesData}
                     chartConfig={estructuraCostesAnualesConfig}
                     title="Estructura de costes anuales"
+                    unit="US$"
                 />
                 <PieChart
-                    chartData={chartData}
-                    chartConfig={chartConfig}
+                    chartData={tiempoVsDistanciaData}
+                    chartConfig={tiempoVsDistanciaConfig}
                     title="Costes por tiempo - costes por distancia"
+                    unit="€"
                 />
             </div>
         </main>

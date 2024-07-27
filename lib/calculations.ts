@@ -27,12 +27,13 @@ export const amortizacion = ({
     >;
 }) => {
     return (
-        ((adquisicion - residual) / vidaUtil +
-            (((adquisicion - residual) / -vidaUtil) * interes) /
-                (1 - Math.pow(1 + interes, -vidaUtil)) || 0) +
-        ((remolque - residualRemolque) / vidaUtilRemolque +
-            (((remolque - residualRemolque) / -vidaUtilRemolque) * interes) /
-                (1 - Math.pow(1 + interes, -vidaUtilRemolque)) || 0)
+        (adquisicion - residual) / vidaUtil +
+        (adquisicion - residual) *
+            (-1 / vidaUtil + interes / (1 - Math.pow(1 + interes, -vidaUtil))) +
+        (remolque - residualRemolque) / vidaUtilRemolque +
+        (remolque - residualRemolque) *
+            (-1 / vidaUtilRemolque +
+                interes / (1 - Math.pow(1 + interes, -vidaUtilRemolque)))
     );
 };
 
@@ -44,16 +45,12 @@ export const costePorDistancia = (
         vehiculo: Pick<Servicio["vehiculo"], "neumaticos" | "mantenimiento">;
         parametros: Pick<Servicio["parametros"], "carburante" | "km">;
     }
-) => {
-    const ks = kmServicio(servicio);
-    return (
-        ((ks * servicio.consumo) / 100) * servicio.parametros.carburante +
-        (ks *
-            (servicio.vehiculo.neumaticos + servicio.vehiculo.mantenimiento)) /
-            servicio.parametros.km +
-        servicio.peajes
-    );
-};
+) =>
+    (servicio.parametros.km / 100) *
+        servicio.consumo *
+        servicio.parametros.carburante +
+    servicio.vehiculo.neumaticos * servicio.parametros.km +
+    servicio.vehiculo.mantenimiento * servicio.parametros.km;
 
 export const horasServicio = (
     servicio: Pick<Servicio, "horasCarga" | "horasVacio" | "horasParalizacion">
@@ -64,12 +61,12 @@ export const horasServicio = (
 
 export const costePorTiempo = (servicio: Servicio) => {
     return (
-        horasServicio(servicio) * amortizacion(servicio) +
+        amortizacion(servicio) +
         servicio.parametros.conductor +
         servicio.parametros.dietas +
         servicio.parametros.seguros +
         servicio.parametros.fiscal +
         servicio.parametros.carburante +
-        servicio.parametros.indirectos / servicio.parametros.horas
+        servicio.parametros.indirectos
     );
 };
