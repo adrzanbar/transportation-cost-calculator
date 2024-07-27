@@ -16,8 +16,9 @@ import {
 } from "@/lib/calculations";
 import prisma from "@/prisma/prisma";
 import { notFound } from "next/navigation";
-import { Component as PieChart } from "@/components/pie-chart";
+import { CostPieChart } from "@/components/cost-pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
+import { CostTable } from "@/components/cost-table";
 
 export default async function Page({ params }: { params: { id: string } }) {
     const servicio = await prisma.servicio.findUnique({
@@ -25,6 +26,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         include: { vehiculo: true, parametros: true },
     });
     if (!servicio) notFound();
+    const cpt = costePorTiempo(servicio);
     const cpd = combustibleNeumaticoReparacionMantenimiento(servicio);
     const cpds = costePorDistanciaServicio(servicio);
     const cpts = costePorTiempoServicio(servicio);
@@ -75,7 +77,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     const tiempoVsDistanciaData = [
         {
             name: "tiempo",
-            data: costePorTiempo(servicio),
+            data: cpt,
             fill: "var(--color-tiempo)",
         },
         {
@@ -170,17 +172,46 @@ export default async function Page({ params }: { params: { id: string } }) {
                 </Card>
             </div>
             <div className="grid grid-cols-2 gap-2">
-                <PieChart
+                <CostPieChart
                     chartData={estructuraCostesAnualesData}
                     chartConfig={estructuraCostesAnualesConfig}
                     title="Estructura de costes anuales"
                     unit="US$"
                 />
-                <PieChart
+                <CostPieChart
                     chartData={tiempoVsDistanciaData}
                     chartConfig={tiempoVsDistanciaConfig}
                     title="Costes por tiempo - costes por distancia"
                     unit="€"
+                />
+            </div>
+            <div>
+                <CostTable
+                    rows={[
+                        {
+                            name: "Coste total medio (por km. facturado)",
+                            data: (cpt + cpd) / servicio.parametros.km,
+                        },
+                        {
+                            name: "Coste total medio (por hora facturada)",
+                            data: (cpt + cpd) / servicio.parametros.horas,
+                        },
+                        {
+                            name: "Coste por distancia media (por km.)",
+                            data: cpd / servicio.parametros.km,
+                        },
+                        {
+                            name: "Coste por tiempo medio (por hora)",
+                            data: cpt / servicio.parametros.horas,
+                        },
+                        {
+                            name: "Costes totales por viajero-kilómetro",
+                            data:
+                                (cpt + cpd) /
+                                servicio.parametros.km /
+                                servicio.parametros.horas,
+                        },
+                    ]}
                 />
             </div>
         </main>

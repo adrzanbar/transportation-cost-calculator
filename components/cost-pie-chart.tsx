@@ -24,7 +24,7 @@ export type ComponentProps = {
     unit: string;
 };
 
-export function Component({
+export function CostPieChart({
     chartData,
     chartConfig,
     title,
