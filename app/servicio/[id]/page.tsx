@@ -6,48 +6,18 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
-    amortizacion,
-    costePorDistancia,
+    amortizacionYGastosFinancieros,
+    combustibleNeumaticoReparacionMantenimiento,
+    costePorDistanciaServicio,
     costePorTiempo,
+    costePorTiempoServicio,
+    personal,
+    segurosFiscalesGestionComercializacion,
 } from "@/lib/calculations";
 import prisma from "@/prisma/prisma";
 import { notFound } from "next/navigation";
 import { Component as PieChart } from "@/components/pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
-
-const chartData = [
-    { name: "chrome", data: 275, fill: "var(--color-chrome)" },
-    { name: "safari", data: 200, fill: "var(--color-safari)" },
-    { name: "firefox", data: 287, fill: "var(--color-firefox)" },
-    { name: "edge", data: 173, fill: "var(--color-edge)" },
-    { name: "other", data: 190, fill: "var(--color-other)" },
-];
-
-const chartConfig = {
-    data: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
-        color: "hsl(var(--chart-1))",
-    },
-    safari: {
-        label: "Safari",
-        color: "hsl(var(--chart-2))",
-    },
-    firefox: {
-        label: "Firefox",
-        color: "hsl(var(--chart-3))",
-    },
-    edge: {
-        label: "Edge",
-        color: "hsl(var(--chart-4))",
-    },
-    other: {
-        label: "Other",
-        color: "hsl(var(--chart-5))",
-    },
-} satisfies ChartConfig;
 
 export default async function Page({ params }: { params: { id: string } }) {
     const servicio = await prisma.servicio.findUnique({
@@ -55,37 +25,29 @@ export default async function Page({ params }: { params: { id: string } }) {
         include: { vehiculo: true, parametros: true },
     });
     if (!servicio) notFound();
-    const cpt = costePorTiempo(servicio);
-    const cpd = costePorDistancia(servicio);
-    const total = cpd + cpt + amortizacion(servicio);
+    const cpd = combustibleNeumaticoReparacionMantenimiento(servicio);
+    const cpds = costePorDistanciaServicio(servicio);
+    const cpts = costePorTiempoServicio(servicio);
+    const total = cpds + cpts + servicio.otros;
     const estructuraCostesAnualesData = [
         {
             name: "amortizacion",
-            data: amortizacion(servicio),
+            data: amortizacionYGastosFinancieros(servicio),
             fill: "var(--color-amortizacion)",
         },
         {
             name: "personal",
-            data: servicio.parametros.conductor + servicio.parametros.dietas,
+            data: personal(servicio),
             fill: "var(--color-personal)",
         },
         {
             name: "seguros",
-            data:
-                servicio.parametros.seguros +
-                servicio.parametros.fiscal +
-                servicio.parametros.carburante +
-                servicio.parametros.indirectos,
+            data: segurosFiscalesGestionComercializacion(servicio),
             fill: "var(--color-seguros)",
         },
         {
             name: "combustible",
-            data:
-                (servicio.parametros.km / 100) *
-                    servicio.parametros.consumo *
-                    servicio.parametros.carburante +
-                servicio.vehiculo.neumaticos * servicio.parametros.km +
-                servicio.vehiculo.mantenimiento * servicio.parametros.km,
+            data: cpd,
             fill: "var(--color-combustible)",
         },
     ];
@@ -111,15 +73,14 @@ export default async function Page({ params }: { params: { id: string } }) {
         },
     } satisfies ChartConfig;
     const tiempoVsDistanciaData = [
-        { name: "tiempo", data: cpd, fill: "var(--color-tiempo)" },
+        {
+            name: "tiempo",
+            data: costePorTiempo(servicio),
+            fill: "var(--color-tiempo)",
+        },
         {
             name: "distancia",
-            data:
-                (servicio.parametros.km / 100) *
-                    servicio.parametros.consumo *
-                    servicio.parametros.carburante +
-                servicio.vehiculo.neumaticos * servicio.parametros.km +
-                servicio.vehiculo.mantenimiento * servicio.parametros.km,
+            data: cpd,
             fill: "var(--color-distancia)",
         },
     ];
@@ -150,13 +111,15 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <div className="flex justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {cpd.toLocaleString("es-AR")}
+                                {cpds.toLocaleString("es-AR")}
                             </p>
                         </div>
                         <div className="flex justify-between">
                             <p>AR$</p>
                             <p className="text-right">
-                                {(cpd * servicio.dolar).toLocaleString("es-AR")}
+                                {(cpds * servicio.dolar).toLocaleString(
+                                    "es-AR"
+                                )}
                             </p>
                         </div>
                     </CardContent>
@@ -170,13 +133,15 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <div className="flex justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {cpt.toLocaleString("es-AR")}
+                                {cpts.toLocaleString("es-AR")}
                             </p>
                         </div>
                         <div className="flex justify-between">
                             <p className="text-right">AR$</p>
                             <p>
-                                {(cpt * servicio.dolar).toLocaleString("es-AR")}
+                                {(cpts * servicio.dolar).toLocaleString(
+                                    "es-AR"
+                                )}
                             </p>
                         </div>
                     </CardContent>
