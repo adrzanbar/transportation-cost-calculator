@@ -12,7 +12,6 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { format } from "@/lib/utils";
 
 export type ComponentProps = {
     chartData: {
@@ -26,7 +25,7 @@ export type ComponentProps = {
 export function Component({ chartData, chartConfig }: ComponentProps) {
     const total = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.data, 0);
-    }, []);
+    }, [chartData]);
 
     return (
         <Card className="flex flex-col">

@@ -4,7 +4,7 @@ import prisma from "@/prisma/prisma";
 import { notFound } from "next/navigation";
 import { Component as PieChart } from "@/components/pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
-import { getFixedNumber } from "@/lib/utils";
+import { getFixedNumberWithFallback } from "@/lib/utils";
 
 const chartData = [
     { name: "chrome", data: 275, fill: "var(--color-chrome)" },
@@ -60,13 +60,21 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <div className="flex gap-2 justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {getFixedNumber(cpd, 2)}
+                                {getFixedNumberWithFallback(
+                                    cpd,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
                             </p>
                         </div>
                         <div className="flex gap-2 justify-between">
                             <p>AR$</p>
                             <p className="text-right">
-                                {getFixedNumber(cpd * servicio.dolar, 2)}
+                                {getFixedNumberWithFallback(
+                                    cpd * servicio.dolar,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
                             </p>
                         </div>
                     </CardContent>
@@ -79,12 +87,22 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <div className="flex gap-2 justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {getFixedNumber(cpt, 2)}
+                                {getFixedNumberWithFallback(
+                                    cpt,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
                             </p>
                         </div>
                         <div className="flex gap-2 justify-between">
                             <p className="text-right">AR$</p>
-                            <p>{getFixedNumber(cpt * servicio.dolar, 2)}</p>
+                            <p>
+                                {getFixedNumberWithFallback(
+                                    cpt * servicio.dolar,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
@@ -96,13 +114,21 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <div className="flex gap-2 justify-between">
                             <p>US$</p>
                             <p className="text-right font-bold">
-                                {getFixedNumber(total, 2)}
+                                {getFixedNumberWithFallback(
+                                    total,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
                             </p>
                         </div>
                         <div className="flex gap-2 justify-between">
                             <p>AR$</p>
                             <p className="text-right font-bold">
-                                {getFixedNumber(total * servicio.dolar, 2)}
+                                {getFixedNumberWithFallback(
+                                    total * servicio.dolar,
+                                    2,
+                                    "calculando"
+                                ).toLocaleString("es-AR")}
                             </p>
                         </div>
                     </CardContent>

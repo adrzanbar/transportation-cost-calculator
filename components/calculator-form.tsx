@@ -450,8 +450,8 @@ export default function CalculatorForm({
                                         />
                                     </FormControl>
                                 </FormItem>
-                                <FormItem className="font-bold">
-                                    <FormLabel>
+                                <FormItem>
+                                    <FormLabel className="font-bold">
                                         Gasto anual en mantenimiento sin IVA
                                         (US$)
                                     </FormLabel>
