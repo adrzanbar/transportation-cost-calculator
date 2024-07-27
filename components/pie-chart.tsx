@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Label, Pie, PieChart } from "recharts";
+import { Label, LabelList, Pie, PieChart } from "recharts";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -20,9 +20,10 @@ export type ComponentProps = {
         fill: string;
     }[];
     chartConfig: ChartConfig;
+    title: string;
 };
 
-export function Component({ chartData, chartConfig }: ComponentProps) {
+export function Component({ chartData, chartConfig, title }: ComponentProps) {
     const total = React.useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.data, 0);
     }, [chartData]);
@@ -30,7 +31,7 @@ export function Component({ chartData, chartConfig }: ComponentProps) {
     return (
         <Card className="flex flex-col">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Pie Chart - Donut with Text</CardTitle>
+                <CardTitle>{title}</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
@@ -46,8 +47,8 @@ export function Component({ chartData, chartConfig }: ComponentProps) {
                             data={chartData}
                             dataKey="data"
                             nameKey="name"
-                            innerRadius="50%"
-                            strokeWidth="50%"
+                            innerRadius={60}
+                            strokeWidth={5}
                         >
                             <Label
                                 content={({ viewBox }) => {
@@ -81,6 +82,21 @@ export function Component({ chartData, chartConfig }: ComponentProps) {
                                         );
                                     }
                                 }}
+                            />
+                            <LabelList
+                                dataKey="name"
+                                className="fill-background"
+                                stroke="none"
+                                fontSize={12}
+                                formatter={(value: keyof typeof chartConfig) =>
+                                    `${(
+                                        ((chartData.find(
+                                            (d) => d.name === value
+                                        )?.data || 0) /
+                                            total) *
+                                        100
+                                    ).toLocaleString("es-AR")}%`
+                                }
                             />
                         </Pie>
                         <ChartLegend

@@ -22,7 +22,6 @@ import { Prisma } from "@prisma/client";
 import { calculateServiceCost } from "@/app/actions";
 import { formSchema, FormData } from "@/app/validation";
 import { useEffect } from "react";
-import { getFixedNumberWithFallback } from "@/lib/utils";
 import { horasServicio, kmServicio } from "@/lib/calculations";
 
 type VehiculoWithParametros = Prisma.VehiculoGetPayload<{
@@ -404,12 +403,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={getFixedNumberWithFallback(
+                                            value={(
                                                 formData.parametros.carburante *
-                                                    formData.parametros.km,
-                                                2,
-                                                "calculando..."
-                                            )}
+                                                formData.parametros.km
+                                            )
+                                                .toLocaleString("es-AR")
+                                                .replace("NaN", "")}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -441,12 +440,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={getFixedNumberWithFallback(
+                                            value={(
                                                 vehiculo.neumaticos *
-                                                    formData.parametros.km,
-                                                2,
-                                                "calculando..."
-                                            )}
+                                                formData.parametros.km
+                                            )
+                                                .toLocaleString("es-AR")
+                                                .replace("NaN", "")}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -459,12 +458,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={getFixedNumberWithFallback(
+                                            value={(
                                                 vehiculo.mantenimiento *
-                                                    formData.parametros.km,
-                                                2,
-                                                "calculando..."
-                                            )}
+                                                formData.parametros.km
+                                            )
+                                                .toLocaleString("es-AR")
+                                                .replace("NaN", "")}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -485,11 +484,9 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={getFixedNumberWithFallback(
-                                                kmServicio(formData),
-                                                2,
-                                                "calculando..."
-                                            )}
+                                            value={kmServicio(formData)
+                                                .toLocaleString("es-AR")
+                                                .replace("NaN", "")}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -538,11 +535,9 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={getFixedNumberWithFallback(
-                                                horasServicio(formData),
-                                                2,
-                                                "calculando..."
-                                            )}
+                                            value={horasServicio(formData)
+                                                .toLocaleString("es-AR")
+                                                .replace("NaN", "")}
                                         />
                                     </FormControl>
                                 </FormItem>

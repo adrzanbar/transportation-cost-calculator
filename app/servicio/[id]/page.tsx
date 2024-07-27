@@ -4,7 +4,6 @@ import prisma from "@/prisma/prisma";
 import { notFound } from "next/navigation";
 import { Component as PieChart } from "@/components/pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
-import { getFixedNumberWithFallback } from "@/lib/utils";
 
 const chartData = [
     { name: "chrome", data: 275, fill: "var(--color-chrome)" },
@@ -49,59 +48,95 @@ export default async function Page({ params }: { params: { id: string } }) {
     const cpd = costePorDistancia(servicio);
     const cpt = costePorDistancia(servicio);
     const total = cpd + cpt + amortizacion(servicio);
+    const estructuraCostesAnualesData = [
+        {
+            name: "amortizacion",
+            data: amortizacion(servicio),
+            fill: "var(--color-amortizacion)",
+        },
+        {
+            name: "personal",
+            data: servicio.parametros.conductor + servicio.parametros.dietas,
+            fill: "var(--color-personal)",
+        },
+        {
+            name: "seguros",
+            data:
+                servicio.parametros.seguros +
+                servicio.parametros.fiscal +
+                servicio.parametros.carburante +
+                servicio.parametros.indirectos,
+            fill: "var(--color-seguros)",
+        },
+        {
+            name: "combustible",
+            data:
+                (servicio.parametros.km / 100) *
+                    servicio.parametros.consumo *
+                    servicio.parametros.carburante +
+                servicio.vehiculo.neumaticos * servicio.parametros.km +
+                servicio.vehiculo.mantenimiento * servicio.parametros.km,
+            fill: "var(--color-combustible)",
+        },
+    ];
+    const estructuraCostesAnualesConfig = {
+        data: {
+            label: "Costes",
+        },
+        amortizacion: {
+            label: "Amortización y gastos financieros",
+            color: "hsl(var(--chart-1))",
+        },
+        personal: {
+            label: "Personal",
+            color: "hsl(var(--chart-2))",
+        },
+        seguros: {
+            label: "Seguros, costes fiscales, gestión y comercialización",
+            color: "hsl(var(--chart-3))",
+        },
+        combustible: {
+            label: "Combustible, neumáticos, reparaciones, mantenimiento",
+            color: "hsl(var(--chart-4))",
+        },
+    } satisfies ChartConfig;
     return (
         <main className="flex justify-center flex-wrap m-2 p-2 gap-2">
-            <div className="flex gap-2">
-                <Card className="w-72">
+            <div className="grid grid-cols-3 gap-2">
+                <Card>
                     <CardHeader>
                         <CardTitle>Coste por distancia</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {getFixedNumberWithFallback(
-                                    cpd,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {cpd.toLocaleString("es-AR")}
                             </p>
                         </div>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p>AR$</p>
                             <p className="text-right">
-                                {getFixedNumberWithFallback(
-                                    cpd * servicio.dolar,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {(cpd * servicio.dolar).toLocaleString("es-AR")}
                             </p>
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="w-72">
+                <Card>
                     <CardHeader>
                         <CardTitle>Coste por tiempo</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p>US$</p>
                             <p className="text-right">
-                                {getFixedNumberWithFallback(
-                                    cpt,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {cpt.toLocaleString("es-AR")}
                             </p>
                         </div>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p className="text-right">AR$</p>
                             <p>
-                                {getFixedNumberWithFallback(
-                                    cpt * servicio.dolar,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {(cpt * servicio.dolar).toLocaleString("es-AR")}
                             </p>
                         </div>
                     </CardContent>
@@ -111,32 +146,34 @@ export default async function Page({ params }: { params: { id: string } }) {
                         <CardTitle>Coste total de este Servicio</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p>US$</p>
                             <p className="text-right font-bold">
-                                {getFixedNumberWithFallback(
-                                    total,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {total.toLocaleString("es-AR")}
                             </p>
                         </div>
-                        <div className="flex gap-2 justify-between">
+                        <div className="flex justify-between">
                             <p>AR$</p>
                             <p className="text-right font-bold">
-                                {getFixedNumberWithFallback(
-                                    total * servicio.dolar,
-                                    2,
-                                    "calculando"
-                                ).toLocaleString("es-AR")}
+                                {(total * servicio.dolar).toLocaleString(
+                                    "es-AR"
+                                )}
                             </p>
                         </div>
                     </CardContent>
                 </Card>
             </div>
-            <div className="flex flex-row gap-2">
-                <PieChart chartData={chartData} chartConfig={chartConfig} />
-                <PieChart chartData={chartData} chartConfig={chartConfig} />
+            <div className="grid grid-cols-2 gap-2">
+                <PieChart
+                    chartData={estructuraCostesAnualesData}
+                    chartConfig={estructuraCostesAnualesConfig}
+                    title="Estructura de costes anuales"
+                />
+                <PieChart
+                    chartData={chartData}
+                    chartConfig={chartConfig}
+                    title="Costes por tiempo - costes por distancia"
+                />
             </div>
         </main>
     );

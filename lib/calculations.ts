@@ -37,7 +37,7 @@ export const amortizacion = ({
 };
 
 export const kmServicio = (servicio: Pick<Servicio, "kmCarga" | "kmVacio">) =>
-    servicio.kmCarga + servicio.kmVacio;
+    Number(servicio.kmCarga) + Number(servicio.kmVacio);
 
 export const costePorDistancia = (
     servicio: Pick<Servicio, "kmCarga" | "kmVacio" | "consumo" | "peajes"> & {
@@ -57,7 +57,10 @@ export const costePorDistancia = (
 
 export const horasServicio = (
     servicio: Pick<Servicio, "horasCarga" | "horasVacio" | "horasParalizacion">
-) => servicio.horasCarga + servicio.horasVacio + servicio.horasParalizacion;
+) =>
+    Number(servicio.horasCarga) +
+    Number(servicio.horasVacio) +
+    Number(servicio.horasParalizacion);
 
 export const costePorTiempo = (servicio: Servicio) => {
     return (
