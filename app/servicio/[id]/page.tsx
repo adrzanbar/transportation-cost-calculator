@@ -101,7 +101,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     } satisfies ChartConfig;
     return (
         <main className="m-2 p-2 flex flex-col gap-2">
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-2">
                 <Card className="flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>
@@ -171,7 +171,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     </CardContent>
                 </Card>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <CostPieChart
                     chartData={estructuraCostesAnualesData}
                     chartConfig={estructuraCostesAnualesConfig}
