@@ -5,9 +5,16 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function format(number: number) {
-    return new Intl.NumberFormat("es-ES", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(number);
-}
+export const getFixedNumber = (number: number, round: number) =>
+    parseFloat(Number(number).toFixed(round));
+
+export const nanFallback = (value: any, fallback: any) =>
+    isNaN(value) ? fallback : value;
+
+export const getFixedNumberWithFallback = (
+    number: number,
+    round: number,
+    fallback: any
+) => {
+    return nanFallback(getFixedNumber(number, round), fallback);
+};

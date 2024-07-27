@@ -35,3 +35,38 @@ export const amortizacion = ({
                 (1 - Math.pow(1 + interes, -vidaUtilRemolque)) || 0)
     );
 };
+
+export const kmServicio = (servicio: Pick<Servicio, "kmCarga" | "kmVacio">) =>
+    servicio.kmCarga + servicio.kmVacio;
+
+export const costePorDistancia = (
+    servicio: Pick<Servicio, "kmCarga" | "kmVacio" | "consumo" | "peajes"> & {
+        vehiculo: Pick<Servicio["vehiculo"], "neumaticos" | "mantenimiento">;
+        parametros: Pick<Servicio["parametros"], "carburante" | "km">;
+    }
+) => {
+    const ks = kmServicio(servicio);
+    return (
+        ((ks * servicio.consumo) / 100) * servicio.parametros.carburante +
+        (ks *
+            (servicio.vehiculo.neumaticos + servicio.vehiculo.mantenimiento)) /
+            servicio.parametros.km +
+        servicio.peajes
+    );
+};
+
+export const horasServicio = (
+    servicio: Pick<Servicio, "horasCarga" | "horasVacio" | "horasParalizacion">
+) => servicio.horasCarga + servicio.horasVacio + servicio.horasParalizacion;
+
+export const costePorTiempo = (servicio: Servicio) => {
+    return (
+        horasServicio(servicio) * amortizacion(servicio) +
+        servicio.parametros.conductor +
+        servicio.parametros.dietas +
+        servicio.parametros.seguros +
+        servicio.parametros.fiscal +
+        servicio.parametros.carburante +
+        servicio.parametros.indirectos / servicio.parametros.horas
+    );
+};

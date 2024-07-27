@@ -7,25 +7,10 @@ export default async function Home() {
             parametros: true,
         },
     });
-    const exchangeRateUrl = process.env.EXCHANGE_RATE_URL;
-    let dolar = 0;
-    if (typeof exchangeRateUrl === "string") {
-        try {
-            const response = await fetch(exchangeRateUrl, {
-                next: { revalidate: 3600 },
-            });
-            if (!response.ok) {
-                throw new Error(
-                    `Error fetching exchange rate: ${response.statusText}`
-                );
-            }
-            const data = await response.json();
-            dolar = data.conversion_rate;
-        } catch (error) {
-            console.error("Failed to fetch exchange rate:", error);
-        }
-    } else {
-        console.error("exchangeRateUrl is undefined");
-    }
+    const response = await fetch(process.env.EXCHANGE_RATE_URL!, {
+        next: { revalidate: 3600 },
+    });
+    const data = await response.json();
+    const dolar = data.conversion_rate || 0;
     return <CalculatorForm vehiculos={vehiculos} dolar={dolar} />;
 }

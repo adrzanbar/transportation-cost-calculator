@@ -1,138 +1,116 @@
-import { CostStructurePieChart } from "@/components/cost-pie-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { amortizacion } from "@/lib/calculations";
-import { format } from "@/lib/utils";
+import { amortizacion, costePorDistancia } from "@/lib/calculations";
 import prisma from "@/prisma/prisma";
+import { notFound } from "next/navigation";
+import { Component as PieChart } from "@/components/pie-chart";
+import { ChartConfig } from "@/components/ui/chart";
+import { getFixedNumber } from "@/lib/utils";
+
+const chartData = [
+    { name: "chrome", data: 275, fill: "var(--color-chrome)" },
+    { name: "safari", data: 200, fill: "var(--color-safari)" },
+    { name: "firefox", data: 287, fill: "var(--color-firefox)" },
+    { name: "edge", data: 173, fill: "var(--color-edge)" },
+    { name: "other", data: 190, fill: "var(--color-other)" },
+];
+
+const chartConfig = {
+    data: {
+        label: "Visitors",
+    },
+    chrome: {
+        label: "Chrome",
+        color: "hsl(var(--chart-1))",
+    },
+    safari: {
+        label: "Safari",
+        color: "hsl(var(--chart-2))",
+    },
+    firefox: {
+        label: "Firefox",
+        color: "hsl(var(--chart-3))",
+    },
+    edge: {
+        label: "Edge",
+        color: "hsl(var(--chart-4))",
+    },
+    other: {
+        label: "Other",
+        color: "hsl(var(--chart-5))",
+    },
+} satisfies ChartConfig;
 
 export default async function Page({ params }: { params: { id: string } }) {
     const servicio = await prisma.servicio.findUnique({
         where: { id: Number(params.id) },
         include: { vehiculo: true, parametros: true },
     });
-    if (!servicio) return "Error loading servicio";
-    const vehiculo = await prisma.vehiculo.findUnique({
-        where: { nombre: servicio.vehiculo.nombre },
-        include: { parametros: true },
-    });
-    if (!vehiculo) return "Error loading vehiculo";
-    const kmServicio = Number(servicio.kmCarga) + Number(servicio.kmVacio);
-    const costePorDistancia = vehiculo
-        ? ((kmServicio * servicio.consumo) / 100) *
-              servicio.parametros.carburante +
-          (kmServicio * (vehiculo.neumaticos + vehiculo.mantenimiento)) /
-              servicio.parametros.km +
-          servicio.peajes
-        : 0;
-    const horasServicio =
-        Number(servicio.horasCarga) +
-        Number(servicio.horasVacio) +
-        Number(servicio.horasParalizacion);
-    const costePorTiempo =
-        (horasServicio * amortizacion(servicio) +
-            servicio.parametros.conductor +
-            servicio.parametros.dietas +
-            servicio.parametros.seguros +
-            servicio.parametros.fiscal +
-            servicio.parametros.carburante +
-            servicio.parametros.indirectos) /
-        servicio.parametros.horas;
-    const total = costePorDistancia + costePorTiempo + servicio.otros;
+    if (!servicio) notFound();
+    const cpd = costePorDistancia(servicio);
+    const cpt = costePorDistancia(servicio);
+    const total = cpd + cpt + amortizacion(servicio);
     return (
-        <main className="space-y-2 p-2 m-2">
-            <div className="flex gap-2 m-auto">
-                <Card>
-                    <CardHeader className="space-y-2">
+        <main className="flex justify-center flex-wrap m-2 p-2 gap-2">
+            <div className="flex gap-2">
+                <Card className="w-72">
+                    <CardHeader>
                         <CardTitle>Coste por distancia</CardTitle>
-                        <CardContent>
-                            <div className="flex gap-2 justify-between">
-                                <p>US$</p>
-                                <p className="text-right">
-                                    {format(costePorDistancia)}
-                                </p>
-                            </div>
-                            <div className="flex gap-2 justify-between">
-                                <p>AR$</p>
-                                <p className="text-right">
-                                    {format(costePorDistancia * servicio.dolar)}
-                                </p>
-                            </div>
-                        </CardContent>
                     </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-2 justify-between">
+                            <p>US$</p>
+                            <p className="text-right">
+                                {getFixedNumber(cpd, 2)}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 justify-between">
+                            <p>AR$</p>
+                            <p className="text-right">
+                                {getFixedNumber(cpd * servicio.dolar, 2)}
+                            </p>
+                        </div>
+                    </CardContent>
                 </Card>
-                <Card>
+                <Card className="w-72">
                     <CardHeader>
                         <CardTitle>Coste por tiempo</CardTitle>
-                        <CardContent>
-                            <div className="flex gap-2 justify-between">
-                                <p>US$</p>
-                                <p className="text-right">
-                                    {format(costePorTiempo)}
-                                </p>
-                            </div>
-                            <div className="flex gap-2 justify-between">
-                                <p className="text-right">AR$</p>
-                                <p>{format(costePorTiempo * servicio.dolar)}</p>
-                            </div>
-                        </CardContent>
                     </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-2 justify-between">
+                            <p>US$</p>
+                            <p className="text-right">
+                                {getFixedNumber(cpt, 2)}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 justify-between">
+                            <p className="text-right">AR$</p>
+                            <p>{getFixedNumber(cpt * servicio.dolar, 2)}</p>
+                        </div>
+                    </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle>Coste total de este servicio</CardTitle>
-                        <CardContent>
-                            <div className="flex gap-2 justify-between">
-                                <p>US$</p>
-                                <p className="text-right font-bold">
-                                    {format(total)}
-                                </p>
-                            </div>
-                            <div className="flex gap-2 justify-between">
-                                <p>AR$</p>
-                                <p className="text-right font-bold">
-                                    {format(total * servicio.dolar)}
-                                </p>
-                            </div>
-                        </CardContent>
+                        <CardTitle>Coste total de este Servicio</CardTitle>
                     </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-2 justify-between">
+                            <p>US$</p>
+                            <p className="text-right font-bold">
+                                {getFixedNumber(total, 2)}
+                            </p>
+                        </div>
+                        <div className="flex gap-2 justify-between">
+                            <p>AR$</p>
+                            <p className="text-right font-bold">
+                                {getFixedNumber(total * servicio.dolar, 2)}
+                            </p>
+                        </div>
+                    </CardContent>
                 </Card>
             </div>
-
-            <div>
-                <CostStructurePieChart
-                    costos={[
-                        amortizacion(servicio),
-                        servicio.parametros.conductor +
-                            servicio.parametros.dietas,
-                        servicio.parametros.seguros +
-                            servicio.parametros.fiscal +
-                            servicio.parametros.carburante +
-                            servicio.parametros.indirectos,
-                        (servicio.parametros.km / 100) *
-                            servicio.parametros.consumo *
-                            servicio.parametros.carburante +
-                            servicio.vehiculo.neumaticos *
-                                servicio.parametros.km +
-                            servicio.vehiculo.mantenimiento *
-                                servicio.parametros.km,
-                    ].map((costo) => Number(costo.toFixed(2)))}
-                    estadisticos={[
-                        amortizacion({
-                            vehiculo,
-                            parametros: vehiculo.parametros,
-                        }),
-                        vehiculo.parametros.conductor +
-                            vehiculo.parametros.dietas,
-                        vehiculo.parametros.seguros +
-                            vehiculo.parametros.fiscal +
-                            vehiculo.parametros.carburante +
-                            vehiculo.parametros.indirectos,
-                        (vehiculo.parametros.km / 100) *
-                            vehiculo.parametros.consumo *
-                            vehiculo.parametros.carburante +
-                            vehiculo.neumaticos * vehiculo.parametros.km +
-                            vehiculo.mantenimiento * vehiculo.parametros.km,
-                    ].map((costo) => Number(costo.toFixed(2)))}
-                />
+            <div className="flex flex-row gap-2">
+                <PieChart chartData={chartData} chartConfig={chartConfig} />
+                <PieChart chartData={chartData} chartConfig={chartConfig} />
             </div>
         </main>
     );

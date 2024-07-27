@@ -21,12 +21,37 @@ import {
 import { Prisma } from "@prisma/client";
 import { calculateServiceCost } from "@/app/actions";
 import { formSchema, FormData } from "@/app/validation";
-import { amortizacion } from "@/lib/calculations";
 import { useEffect } from "react";
+import { getFixedNumberWithFallback } from "@/lib/utils";
+import { horasServicio, kmServicio } from "@/lib/calculations";
 
 type VehiculoWithParametros = Prisma.VehiculoGetPayload<{
     include: { parametros: true };
 }>;
+
+const defaultVehiculo = {
+    nombre: "",
+    neumaticos: 0,
+    mantenimiento: 0,
+    interes: 0,
+    parametros: {
+        horas: 0,
+        conductor: 0,
+        dietas: 0,
+        adquisicion: 0,
+        vidaUtil: 0,
+        residual: 0,
+        remolque: 0,
+        vidaUtilRemolque: 0,
+        residualRemolque: 0,
+        seguros: 0,
+        fiscal: 0,
+        indirectos: 0,
+        carburante: 0,
+        consumo: 0,
+        km: 0,
+    },
+};
 
 export default function CalculatorForm({
     vehiculos,
@@ -51,53 +76,17 @@ export default function CalculatorForm({
             otros: 0,
         },
     });
+
     const formData = form.watch();
-    const { setValue } = form;
 
     const vehiculo =
         vehiculos.find(
             (vehiculo) => vehiculo.nombre === formData.vehiculo.nombre
-        ) || vehiculos[0];
+        ) || defaultVehiculo;
 
     useEffect(() => {
-        setValue("parametros", vehiculo.parametros);
-    }, [vehiculo, setValue]);
-
-    const gastoAnualCarburante =
-        formData.parametros.carburante * formData.parametros.km;
-    const gastoAnualNeumaticos = vehiculo
-        ? vehiculo.neumaticos * formData.parametros.km
-        : 0;
-    const gastoAnualMantenimiento = vehiculo
-        ? vehiculo.mantenimiento * formData.parametros.km
-        : 0;
-    const kmServicio = Number(formData.kmCarga) + Number(formData.kmVacio);
-    const costePorDistancia = vehiculo
-        ? ((kmServicio * formData.consumo) / 100) *
-              formData.parametros.carburante +
-          (kmServicio * (vehiculo.neumaticos + vehiculo.mantenimiento)) /
-              formData.parametros.km +
-          formData.peajes
-        : 0;
-    const horasServicio =
-        Number(formData.horasCarga) +
-        Number(formData.horasVacio) +
-        Number(formData.horasParalizacion);
-    const costePorTiempo =
-        (horasServicio *
-            (vehiculo
-                ? amortizacion({
-                      ...formData,
-                      vehiculo,
-                  })
-                : 0) +
-            formData.parametros.conductor +
-            formData.parametros.dietas +
-            formData.parametros.seguros +
-            formData.parametros.fiscal +
-            formData.parametros.carburante +
-            formData.parametros.indirectos) /
-        formData.parametros.horas;
+        form.setValue("parametros", vehiculo.parametros);
+    }, [vehiculo, form]);
 
     return (
         <Form {...form}>
@@ -415,17 +404,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualCarburante
-                                                )
-                                                    ? gastoAnualCarburante
-                                                    : Number(
-                                                          gastoAnualCarburante.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
+                                            value={getFixedNumberWithFallback(
+                                                formData.parametros.carburante *
+                                                    formData.parametros.km,
+                                                2,
+                                                "calculando..."
+                                            )}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -457,17 +441,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualNeumaticos
-                                                )
-                                                    ? gastoAnualNeumaticos
-                                                    : Number(
-                                                          gastoAnualNeumaticos.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
+                                            value={getFixedNumberWithFallback(
+                                                vehiculo.neumaticos *
+                                                    formData.parametros.km,
+                                                2,
+                                                "calculando..."
+                                            )}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -480,17 +459,12 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={
-                                                Number.isInteger(
-                                                    gastoAnualMantenimiento
-                                                )
-                                                    ? gastoAnualMantenimiento
-                                                    : Number(
-                                                          gastoAnualMantenimiento.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
+                                            value={getFixedNumberWithFallback(
+                                                vehiculo.mantenimiento *
+                                                    formData.parametros.km,
+                                                2,
+                                                "calculando..."
+                                            )}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -511,13 +485,11 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={
-                                                Number.isInteger(kmServicio)
-                                                    ? kmServicio
-                                                    : Number(
-                                                          kmServicio.toFixed(2)
-                                                      )
-                                            }
+                                            value={getFixedNumberWithFallback(
+                                                kmServicio(formData),
+                                                2,
+                                                "calculando..."
+                                            )}
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -566,15 +538,11 @@ export default function CalculatorForm({
                                         <Input
                                             className="text-right font-bold"
                                             readOnly
-                                            value={
-                                                Number.isInteger(horasServicio)
-                                                    ? horasServicio
-                                                    : Number(
-                                                          horasServicio.toFixed(
-                                                              2
-                                                          )
-                                                      )
-                                            }
+                                            value={getFixedNumberWithFallback(
+                                                horasServicio(formData),
+                                                2,
+                                                "calculando..."
+                                            )}
                                         />
                                     </FormControl>
                                 </FormItem>

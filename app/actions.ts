@@ -21,6 +21,5 @@ export async function calculateServiceCost(formData: FormData) {
             },
         },
     });
-    if (!servicio) return "Error creating service";
-    return redirect(`/servicio/${servicio.id}`);
+    if (servicio) return redirect(`/servicio/${servicio.id}`);
 }
